@@ -3,222 +3,417 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Blink Omni: 1000H Engine</title>
+    <title>BLINK TITAN | The 1000-Hour Mastery OS</title>
     <style>
-        :root { 
-            --gold: #fbbf24; --blue: #3b82f6; --green: #10b981; --red: #ef4444;
-            --bg: #020617; --card: #1e293b; --text: #f8fafc; --accent: #8b5cf6; 
+        :root {
+            --bg: #020617; --card: #0f172a; --accent: #8b5cf6; --gold: #fbbf24;
+            --text: #f8fafc; --green: #10b981; --red: #ef4444; --border: #1e293b;
+            --blue: #3b82f6; --pink: #ec4899; --glass: rgba(255, 255, 255, 0.03);
         }
-        * { box-sizing: border-box; -webkit-user-select: none; touch-action: manipulation; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        
-        .screen { display: none; flex-direction: column; height: 100%; width: 100%; padding: 20px; overflow-y: auto; }
-        .active { display: flex; animation: fadeIn 0.4s ease; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { 
+            background: var(--bg); color: var(--text); margin: 0; 
+            font-family: 'Inter', -apple-system, system-ui, sans-serif; 
+            height: 100vh; overflow: hidden; display: flex; flex-direction: column;
+        }
+
+        /* --- UI SCAFFOLDING --- */
+        .screen { display: none; flex-direction: column; height: 100%; width: 100%; padding: 25px; overflow-y: auto; }
+        .screen.active { display: flex; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-        /* Progress Engine (Scale: 60,000 Minutes) */
-        .prog-container { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .bar-bg { width: 100%; height: 10px; background: #000; border-radius: 5px; margin-top: 10px; overflow: hidden; }
-        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--blue)); width: 0%; transition: 2s ease-in-out; }
-        
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .stat-card { background: var(--card); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #334155; }
-        .stat-val { display: block; font-size: 20px; font-weight: 900; color: var(--gold); }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .brand { font-size: 26px; font-weight: 950; letter-spacing: -1.5px; }
+        .brand span { color: var(--accent); }
 
-        /* Selection & Buttons */
-        select, .btn { width: 100%; padding: 16px; background: var(--card); border: 1px solid #334155; border-radius: 12px; color: white; margin-bottom: 12px; font-size: 14px; outline: none; }
-        .btn-run { background: var(--accent); font-weight: 800; border: none; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
-        .btn-run:active { transform: translateY(2px); box-shadow: none; }
+        /* --- DASHBOARD ELEMENTS --- */
+        .mastery-card { 
+            background: linear-gradient(165deg, var(--card) 0%, #1e293b 100%); 
+            border-radius: 32px; padding: 25px; border: 1px solid var(--border);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6); margin-bottom: 30px;
+        }
+        .progress-label { display: flex; justify-content: space-between; font-size: 11px; font-weight: 900; letter-spacing: 1.5px; opacity: 0.8; }
+        .bar-outer { width: 100%; height: 14px; background: rgba(0,0,0,0.4); border-radius: 7px; margin: 15px 0; overflow: hidden; }
+        .bar-inner { height: 100%; background: linear-gradient(90deg, var(--accent), var(--blue)); width: 0%; transition: 2s cubic-bezier(0.16, 1, 0.3, 1); }
+        
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .stat-box { background: var(--glass); padding: 15px 5px; border-radius: 20px; text-align: center; border: 1px solid var(--border); }
+        .stat-val { display: block; font-size: 22px; font-weight: 900; color: var(--gold); }
+        .stat-tag { font-size: 9px; text-transform: uppercase; font-weight: 800; opacity: 0.5; }
 
-        /* Flow Mode Elements */
-        .game-main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .q-txt { font-size: 1.7rem; font-weight: 800; margin-bottom: 20px; line-height: 1.2; }
-        .opt-grid { display: grid; grid-template-columns: 1fr; gap: 8px; width: 100%; }
-        .opt-btn { background: var(--card); padding: 16px; border-radius: 12px; border: 1px solid #334155; color: white; font-weight: 600; }
-        
-        .drop-zone { min-height: 80px; width: 100%; border: 2px dashed #334155; border-radius: 16px; margin: 15px 0; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; justify-content: center; background: rgba(0,0,0,0.2); }
-        .chip { background: var(--accent); padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
-        
-        .label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--blue); font-weight: 900; margin-bottom: 5px; display: block; }
+        /* --- PATH ELEMENTS --- */
+        .path-title { font-size: 11px; font-weight: 900; color: var(--blue); text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 15px; }
+        .node { 
+            background: var(--card); padding: 22px; border-radius: 24px; margin-bottom: 15px;
+            border: 1px solid var(--border); display: flex; align-items: center; cursor: pointer; transition: 0.2s;
+        }
+        .node.locked { opacity: 0.4; filter: grayscale(1); border-style: dashed; }
+        .node-icon { width: 52px; height: 52px; background: var(--glass); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 20px; }
+        .node-name { font-size: 19px; font-weight: 800; }
+
+        /* --- GAME ENGINE UI --- */
+        .nav-game { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .q-wrap { text-align: center; margin: 20px 0 40px; }
+        .q-hint { font-size: 12px; color: var(--accent); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }
+        .q-main { font-size: 2.4rem; font-weight: 900; line-height: 1.1; margin-top: 10px; }
+
+        .opt-stack { display: grid; gap: 12px; width: 100%; }
+        .opt-btn { background: var(--card); padding: 22px; border-radius: 22px; border: 1px solid var(--border); color: var(--text); font-weight: 700; text-align: left; font-size: 17px; cursor: pointer; }
+        .opt-btn.correct { background: var(--green); border-color: var(--green); color: white; }
+        .opt-btn.wrong { background: var(--red); border-color: var(--red); color: white; animation: shake 0.4s; }
+
+        .drop-zone { min-height: 120px; background: rgba(0,0,0,0.2); border: 2px dashed var(--border); border-radius: 28px; padding: 20px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; }
+        .word-chip { background: var(--accent); padding: 14px 22px; border-radius: 16px; font-weight: 800; color: white; cursor: pointer; box-shadow: 0 4px 0 #6d28d9; }
+
+        /* --- REFERENCE SCREEN --- */
+        .ref-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
+        .ref-head { font-weight: 900; font-size: 18px; color: var(--gold); border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .verb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .verb-item { font-size: 13px; opacity: 0.8; }
+        .verb-item b { color: var(--accent); }
+
+        /* --- BUTTONS --- */
+        .btn-footer { background: var(--accent); color: white; border: none; padding: 22px; border-radius: 22px; font-size: 18px; font-weight: 900; width: 100%; cursor: pointer; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4); margin-top: 10px; }
+        .btn-tab { background: var(--card); border: 1px solid var(--border); color: white; padding: 10px 15px; border-radius: 12px; font-size: 12px; font-weight: 800; cursor: pointer; }
+        .btn-tab.active { background: var(--accent); border-color: var(--accent); }
+
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+        ::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
 
-<div id="scr-home" class="screen active">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-        <h1 style="margin:0; font-size:24px; color:var(--accent);">BLINK OMNI</h1>
-        <div id="rank" style="font-size:10px; font-weight:900; color:var(--gold); border:1px solid var(--gold); padding:4px 10px; border-radius:20px;">RECLUTA</div>
-    </div>
-
-    <div class="prog-container">
-        <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:800;">
-            <span>TOTAL PROGRESS (1000 HOURS)</span>
-            <span id="txt-prog">0 / 60,000 MIN</span>
+<div id="scr-dash" class="screen active">
+    <div class="header">
+        <div class="brand">BLINK<span>TITAN</span></div>
+        <div style="text-align: right;">
+            <div id="disp-streak" style="font-size: 24px; font-weight: 950; color: #ff4d4d;">🔥 0</div>
+            <div class="stat-tag">Daily Streak</div>
         </div>
-        <div class="bar-bg"><div id="fill-prog" class="bar-fill"></div></div>
     </div>
 
-    <div class="stats">
-        <div class="stat-card"><span id="val-xp" class="stat-val">0</span><span class="label">XP Points</span></div>
-        <div class="stat-card"><span id="val-hr" class="stat-val">0.0</span><span class="label">Hours</span></div>
+    <div class="mastery-card">
+        <div class="progress-label"><span>TOTAL MASTERY QUOTA</span><span id="disp-pct">0.0%</span></div>
+        <div class="bar-outer"><div id="bar-main" class="bar-inner"></div></div>
+        <div class="stat-grid">
+            <div class="stat-box"><span class="stat-val" id="disp-xp">0</span><span class="stat-tag">XP</span></div>
+            <div class="stat-box"><span class="stat-val" id="disp-min">0</span><span class="stat-tag">Mins</span></div>
+            <div class="stat-box"><span class="stat-val" id="disp-rank">0</span><span class="stat-tag">Rank</span></div>
+        </div>
     </div>
 
-    <label class="label">Select Level ($A1.1$ - $B2.3$)</label>
-    <select id="sel-lvl">
-        <optgroup label="Beginner Foundation">
-            <option value="A1.1">A1.1: Core Verbs & Pronouns</option>
-            <option value="A1.2">A1.2: Daily Living & Needs</option>
-            <option value="A1.3">A1.3: Basic Directions</option>
-        </optgroup>
-        <optgroup label="Intermediate Mastery">
-            <option value="A2.1">A2.1: Social Narratives</option>
-            <option value="A2.3">A2.3: Expressing Needs</option>
-            <option value="B1.1">B1.1: Debate & Opinion</option>
-        </optgroup>
-        <optgroup label="Advanced Professional">
-            <option value="B2.1">B2.1: Workplace Spanish</option>
-            <option value="B2.3">B2.3: Cultural Complexities</option>
-        </optgroup>
-    </select>
+    <div style="display:flex; gap:10px; margin-bottom:25px;">
+        <button class="btn-tab active" onclick="showPath()">THE PATH</button>
+        <button class="btn-tab" onclick="showRef()">VERB DRIVE</button>
+        <button class="btn-tab" onclick="showDict()">DICTIONARY</button>
+    </div>
 
-    <label class="label">Specialized Domain</label>
-    <select id="sel-sub">
-        <option value="general">General South American</option>
-        <option value="street">Street Slang (CO, AR, PE)</option>
-        <option value="medical">Medical & Wellness</option>
-        <option value="business">Business & Finance</option>
-        <option value="legal">Legal & Documentation</option>
-        <option value="romance">Dating & Social Life</option>
-    </select>
-
-    <button class="btn btn-run" onclick="launchFlow()">START FLOW MODE</button>
+    <div id="dash-content">
+        <div class="path-title">Learning Trajectory</div>
+        <div id="path-map"></div>
+    </div>
 </div>
 
-<div id="scr-flow" class="screen">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <button onclick="saveAndExit()" style="background:none; border:none; color:white; font-size:32px;">✕</button>
-        <div id="tag-mode" class="label" style="background:var(--accent); padding:5px 12px; border-radius:6px; color:white;">MODE</div>
-        <button onclick="talk()" style="background:none; border:none; color:white; font-size:32px;">🔊</button>
+<div id="scr-game" class="screen">
+    <div class="nav-game">
+        <button onclick="quitGame()" style="background:none; border:none; color:white; font-size:32px;">✕</button>
+        <div style="text-align:center;">
+            <div id="mod-title" class="stat-tag" style="color:var(--accent)">FOUNDATION</div>
+            <div id="game-dots" style="display:flex; gap:6px; margin-top:8px; justify-content:center;"></div>
+        </div>
+        <button onclick="audioPlay()" style="background:none; border:none; color:white; font-size:32px;">🔊</button>
     </div>
-    <div id="flow-content" class="game-main"></div>
-    <div id="flow-footer"></div>
+    <div id="game-mount" style="flex:1; display:flex; flex-direction:column; justify-content:center;"></div>
+    <div id="game-footer" style="padding-bottom:20px;"></div>
 </div>
 
 <script>
-// SCALABLE DATA ARCHITECTURE
-const db = {
-    "A1.1": {
-        general: [{es:"Yo necesito ayuda", en:"I need help"},{es:"¿Dónde está?", en:"Where is it?"}],
-        street: [{es:"¡Qué más, parce!", en:"What's up, friend!"}],
-        medical: [{es:"Me duele la cabeza", en:"My head hurts"}]
-    },
-    "B2.3": {
-        business: [{es:"El retorno de inversión", en:"The return on investment"}],
-        legal: [{es:"Sin perjuicio de lo anterior", en:"Without prejudice to the foregoing"}],
-        general: [{es:"Ojalá hubiera sabido", en:"I wish I had known"}]
+/**
+ * THE CURRICULUM DATASET
+ */
+const CURRICULUM = [
+    { id: 0, lvl: "A1.1", icon: "🆔", topic: "Identity & Being", data: [
+        {es:"Yo soy de Colombia", en:"I am from Colombia"}, {es:"Él es profesor", en:"He is a teacher"},
+        {es:"Nosotros somos amigos", en:"We are friends"}, {es:"¿Eres de Argentina?", en:"Are you from Argentina?"},
+        {es:"Ella es doctora", en:"She is a doctor"}, {es:"Ellos son amables", en:"They are kind"},
+        {es:"Soy estudiante", en:"I am a student"}, {es:"¿Quién es él?", en:"Who is he?"},
+        {es:"Es un placer", en:"It's a pleasure"}, {es:"Usted es increíble", en:"You are incredible"},
+        {es:"Yo soy feliz", en:"I am happy"}, {es:"Él es joven", en:"He is young"}
+    ]},
+    { id: 1, lvl: "A1.1", icon: "📍", topic: "States & Locations", data: [
+        {es:"Estoy en casa", en:"I am at home"}, {es:"Estamos felices", en:"We are happy"},
+        {es:"¿Cómo estás?", en:"How are you?"}, {es:"El baño está allá", en:"The bathroom is over there"},
+        {es:"La comida está lista", en:"The food is ready"}, {es:"Él está cansado", en:"He is tired"},
+        {es:"¿Dónde estás?", en:"Where are you?"}, {es:"Estoy muy bien", en:"I am very well"},
+        {es:"La puerta está abierta", en:"The door is open"}, {es:"Estamos listos", en:"We are ready"}
+    ]},
+    { id: 2, lvl: "A1.2", icon: "🆘", topic: "Survival Skills", data: [
+        {es:"Tengo mucha hambre", en:"I am very hungry"}, {es:"Necesito ayuda", en:"I need help"},
+        {es:"Quiero un café", en:"I want a coffee"}, {es:"¿Cuánto cuesta esto?", en:"How much does this cost?"},
+        {es:"Tengo una pregunta", en:"I have a question"}, {es:"No hablo español", en:"I don't speak Spanish"},
+        {es:"¿Dónde está el hotel?", en:"Where is the hotel?"}, {es:"Llama a la policía", en:"Call the police"},
+        {es:"¿Qué hora es?", en:"What time is it?"}, {es:"Perdón por el retraso", en:"Sorry for the delay"}
+    ]},
+    { id: 3, lvl: "A2.1", icon: "🇨🇴", topic: "Paisa Street Slang", data: [
+        {es:"¡Qué más, parce!", en:"What's up, friend!"}, {es:"Hágale pues", en:"Go for it / Do it"},
+        {es:"Todo bien, mijo", en:"All good, my friend"}, {es:"¡Qué chimba!", en:"How cool!"},
+        {es:"Me regala un tinto", en:"Can I have a small black coffee"}, {es:"Estar amañado", en:"To feel at home"},
+        {es:"No me dé papaya", en:"Don't give them a chance"}, {es:"Vaya pues", en:"Go on then"},
+        {es:"¡Qué nota!", en:"How awesome!"}, {es:"Parce, hágale", en:"Friend, go ahead"}
+    ]},
+    { id: 4, lvl: "A2.2", icon: "💼", topic: "Business Spanish", data: [
+        {es:"Tengo una reunión", en:"I have a meeting"}, {es:"Envíeme el reporte", en:"Send me the report"},
+        {es:"El presupuesto es bajo", en:"The budget is low"}, {es:"Trabajo desde casa", en:"I work from home"},
+        {es:"Necesito el contrato", en:"I need the contract"}, {es:"¿Quién es el jefe?", en:"Who is the boss?"},
+        {es:"Hablemos mañana", en:"Let's talk tomorrow"}, {es:"El mercado crece", en:"The market is growing"},
+        {es:"Cierre el trato", en:"Close the deal"}, {es:"Inversión extranjera", en:"Foreign investment"}
+    ]},
+    { id: 5, lvl: "B1.1", icon: "🕰️", topic: "Past Tense Mastery", data: [
+        {es:"Ayer fui al cine", en:"Yesterday I went to the cinema"}, {es:"Hablé con mi jefe", en:"I spoke with my boss"},
+        {es:"Comimos pizza rica", en:"We ate delicious pizza"}, {es:"Él compró un carro", en:"He bought a car"},
+        {es:"Viajamos a México", en:"We traveled to Mexico"}, {es:"¿Qué hiciste hoy?", en:"What did you do today?"},
+        {es:"Vi una película", en:"I saw a movie"}, {es:"Llegué tarde", en:"I arrived late"},
+        {es:"Me gustó el libro", en:"I liked the book"}, {es:"Él dijo la verdad", en:"He told the truth"}
+    ]},
+    { id: 6, lvl: "B1.2", icon: "🏥", topic: "Medical Spanish", data: [
+        {es:"Me duele la cabeza", en:"My head hurts"}, {es:"Tengo mucha tos", en:"I have a lot of cough"},
+        {es:"Necesito una cita", en:"I need an appointment"}, {es:"¿Dónde hay farmacia?", en:"Where is a pharmacy?"},
+        {es:"Soy alérgico a esto", en:"I am allergic to this"}, {es:"Respire profundo", en:"Breathe deeply"},
+        {es:"Me siento muy mal", en:"I feel very bad"}, {es:"Tengo fiebre", en:"I have a fever"},
+        {es:"Presión arterial", en:"Blood pressure"}, {es:"Me duele el estómago", en:"My stomach hurts"}
+    ]},
+    { id: 7, lvl: "B2.1", icon: "⚖️", topic: "Legal Spanish", data: [
+        {es:"Firme el contrato", en:"Sign the contract"}, {es:"Es mi derecho", en:"It is my right"},
+        {es:"Llamaré a mi abogado", en:"I will call my lawyer"}, {es:"El juez decidió", en:"The judge decided"},
+        {es:"Es propiedad privada", en:"It is private property"}, {es:"Bajo la ley", en:"Under the law"},
+        {es:"Es un delito grave", en:"It is a serious crime"}, {es:"Pagar la multa", en:"To pay the fine"},
+        {es:"Presentar una queja", en:"File a complaint"}, {es:"Cumplir el acuerdo", en:"Fulfill the agreement"}
+    ]},
+    { id: 8, lvl: "B2.2", icon: "🎭", topic: "Idioms & Nuance", data: [
+        {es:"Echarle ganas", en:"To put effort in"}, {es:"Estar en las nubes", en:"To be daydreaming"},
+        {es:"Tomar el pelo", en:"To pull someone's leg"}, {es:"No entiendo ni jota", en:"I don't understand a bit"},
+        {es:"Tirar la casa por la ventana", en:"To go all out"}, {es:"A ojo de buen cubero", en:"By rule of thumb"},
+        {es:"Cuesta un ojo de la cara", en:"It costs an arm and a leg"}, {es:"No tener pelos en la lengua", en:"To be outspoken"},
+        {es:"Meter la pata", en:"To mess up"}, {es:"Ser pan comido", en:"To be a piece of cake"}
+    ]}
+];
+
+/**
+ * THE VERB DRIVE DATASET
+ */
+const VERB_DRIVE = {
+    SER: { pres: ["soy", "eres", "es", "somos", "sois", "son"], past: ["fui", "fuiste", "fue", "fuimos", "fuisteis", "fueron"] },
+    ESTAR: { pres: ["estoy", "estás", "está", "estamos", "estáis", "están"], past: ["estuve", "estuviste", "estuvo", "estuvimos", "estuvisteis", "estuvieron"] },
+    TENER: { pres: ["tengo", "tienes", "tiene", "tenemos", "tenéis", "tienen"], past: ["tuve", "tuviste", "tuvo", "tuvimos", "tuvisteis", "tuvieron"] },
+    HACER: { pres: ["hago", "haces", "hace", "hacemos", "hacéis", "hacen"], past: ["hice", "hiciste", "hizo", "hicimos", "hicisteis", "hicieron"] },
+    PODER: { pres: ["puedo", "puedes", "puede", "podemos", "podéis", "pueden"], past: ["pude", "pudiste", "pudo", "pudimos", "pudisteis", "pudieron"] },
+    IR: { pres: ["voy", "vas", "va", "vamos", "vais", "van"], past: ["fui", "fuiste", "fue", "fuimos", "fuisteis", "fueron"] },
+    SABER: { pres: ["sé", "sabes", "sabe", "sabemos", "sabéis", "saben"], past: ["supe", "supiste", "supo", "supimos", "supisteis", "supieron"] },
+    DECIR: { pres: ["digo", "dices", "dice", "decimos", "dicís", "dicen"], past: ["dije", "dijiste", "dijo", "dijimos", "dijisteis", "dijeron"] },
+    QUERER: { pres: ["quiero", "quieres", "quiere", "queremos", "queréis", "quieren"], past: ["quise", "quisiste", "quiso", "quisimos", "quisisteis", "quisieron"] },
+    VER: { pres: ["veo", "ves", "ve", "vemos", "veis", "ven"], past: ["vi", "viste", "vio", "vimos", "visteis", "vieron"] },
+    DAR: { pres: ["doy", "das", "da", "damos", "dais", "dan"], past: ["di", "diste", "dio", "dimos", "disteis", "dieron"] },
+    HABLAR: { pres: ["hablo", "hablas", "habla", "hablamos", "habláis", "hablan"], past: ["hablé", "hablaste", "habló", "hablamos", "hablasteis", "hablaron"] },
+    VENIR: { pres: ["vengo", "vienes", "viene", "venimos", "venís", "vienen"], past: ["vine", "viniste", "vino", "vinimos", "vinisteis", "vinieron"] },
+    SENTIR: { pres: ["siento", "sientes", "siente", "sentimos", "sentís", "sienten"], past: ["sentí", "sentiste", "sintió", "sentimos", "sentisteis", "sintieron"] },
+    BUSCAR: { pres: ["busco", "buscas", "busca", "buscamos", "buscáis", "buscan"], past: ["busqué", "buscaste", "buscó", "buscamos", "buscasteis", "buscaron"] }
+};
+
+/**
+ * THE DICTIONARY DATASET
+ */
+const DICT = [
+    {es:"Amigo", en:"Friend"}, {es:"Casa", en:"House"}, {es:"Trabajo", en:"Work"},
+    {es:"Ciudad", en:"City"}, {es:"Tiempo", en:"Time"}, {es:"Vida", en:"Life"},
+    {es:"Gente", en:"People"}, {es:"Mundo", en:"World"}, {es:"Escuela", en:"School"},
+    {es:"Comida", en:"Food"}, {es:"Dinero", en:"Money"}, {es:"Salud", en:"Health"},
+    {es:"Familia", en:"Family"}, {es:"Agua", en:"Water"}, {es:"Noche", en:"Night"},
+    {es:"Mañana", en:"Morning"}, {es:"Lugar", en:"Place"}, {es:"País", en:"Country"},
+    {es:"Hombre", en:"Man"}, {es:"Mujer", en:"Woman"}, {es:"Niño", en:"Child"},
+    {es:"Empresa", en:"Company"}, {es:"Gobierno", en:"Government"}, {es:"Problema", en:"Problem"},
+    {es:"Libro", en:"Book"}, {es:"Calle", en:"Street"}, {es:"Viaje", en:"Trip"},
+    {es:"Coche", en:"Car"}, {es:"Verdad", en:"Truth"}, {es:"Mentira", en:"Lie"}
+];
+
+// STATE MANAGEMENT
+let state = JSON.parse(localStorage.getItem('titan_master_v12')) || {
+    xp: 0, mins: 0, unlocked: 0, streak: 0, lastDate: null, history: []
+};
+
+let active = { mod: null, deck: [], cur: null, start: null, count: 0, total: 0 };
+
+function init() {
+    updateUI();
+    showPath();
+    processStreak();
+}
+
+function processStreak() {
+    const today = new Date().toDateString();
+    if(state.lastDate !== today) {
+        const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+        if(state.lastDate === yesterday.toDateString()) state.streak++;
+        else if(state.lastDate) state.streak = 1;
+        state.lastDate = today;
+        save();
     }
-};
+}
 
-let user = { xp: 0, mins: 0, lastLvl: "A1.1" };
-let deck = [], cur = null, sessionStart = null;
+// DASHBOARD RENDERING
+function showPath() {
+    toggleTabs(0);
+    const container = document.getElementById('dash-content');
+    container.innerHTML = '<div class="path-title">Learning Trajectory</div><div id="path-map"></div>';
+    const map = document.getElementById('path-map');
+    CURRICULUM.forEach(m => {
+        const locked = m.id > state.unlocked;
+        const div = document.createElement('div');
+        div.className = `node ${locked ? 'locked' : (m.id < state.unlocked ? 'done' : 'active')}`;
+        div.onclick = () => { if(!locked) launch(m); };
+        div.innerHTML = `
+            <div class="node-icon">${locked ? '🔒' : m.icon}</div>
+            <div style="flex:1">
+                <div style="font-size:10px; font-weight:900; color:var(--accent);">${m.lvl} • ${locked ? 'Locked' : 'Open'}</div>
+                <div class="node-name">${m.topic}</div>
+            </div>
+            ${!locked && m.id < state.unlocked ? '<div style="color:var(--green)">✓</div>' : ''}
+        `;
+        map.appendChild(div);
+    });
+}
 
-window.onload = () => {
-    const saved = localStorage.getItem('blink_1000h_v2');
-    if(saved) user = JSON.parse(saved);
-    updateHome();
-};
+function showRef() {
+    toggleTabs(1);
+    const container = document.getElementById('dash-content');
+    container.innerHTML = '<div class="path-title">Verb Conjugation Drive</div>';
+    for(let v in VERB_DRIVE) {
+        const d = VERB_DRIVE[v];
+        const card = document.createElement('div');
+        card.className = 'ref-card';
+        card.innerHTML = `
+            <div class="ref-head"><span>${v}</span><span style="font-size:10px; opacity:0.5;">TOP VERB</span></div>
+            <div class="verb-grid">
+                <div class="verb-item"><b>Pres:</b> ${d.pres.slice(0,3).join(', ')}...</div>
+                <div class="verb-item"><b>Past:</b> ${d.past.slice(0,3).join(', ')}...</div>
+            </div>
+        `;
+        container.appendChild(card);
+    }
+}
 
-function launchFlow() {
-    const l = document.getElementById('sel-lvl').value;
-    const s = document.getElementById('sel-sub').value;
-    const source = (db[l] && db[l][s]) ? db[l][s] : (db["A1.1"]["general"]);
-    deck = [...source].sort(() => 0.5 - Math.random());
-    sessionStart = Date.now();
-    show('scr-flow');
+function showDict() {
+    toggleTabs(2);
+    const container = document.getElementById('dash-content');
+    container.innerHTML = '<div class="path-title">Essential Dictionary</div>';
+    const grid = document.createElement('div');
+    grid.style.display = 'grid'; grid.style.gridTemplateColumns = '1fr 1fr'; grid.style.gap = '10px';
+    DICT.forEach(i => {
+        const d = document.createElement('div');
+        d.className = 'ref-card'; d.style.padding = '12px'; d.style.marginBottom = '0';
+        d.innerHTML = `<div style="font-weight:900; color:var(--accent);">${i.es}</div><div style="font-size:11px; opacity:0.6;">${i.en}</div>`;
+        grid.appendChild(d);
+    });
+    container.appendChild(grid);
+}
+
+// GAME CORE
+function launch(m) {
+    active = { mod: m, deck: [...m.data].sort(()=>0.5-Math.random()), start: Date.now(), count: 0, total: m.data.length };
+    document.getElementById('mod-title').innerText = m.topic.toUpperCase();
+    showScreen('scr-game');
+    genDots();
     next();
 }
 
 function next() {
-    user.xp += 25;
-    cur = deck[Math.floor(Math.random()*deck.length)];
-    const types = ["multi", "scramble", "audio", "flash"];
-    render(types[Math.floor(Math.random()*types.length)]);
+    if(active.deck.length === 0) return finalize();
+    active.cur = active.deck.pop();
+    active.count++;
+    updateDots();
+    renderGame();
 }
 
-function render(t) {
-    const main = document.getElementById('flow-content');
-    const foot = document.getElementById('flow-footer');
-    main.innerHTML = ''; foot.innerHTML = '';
-    document.getElementById('tag-mode').innerText = t.toUpperCase();
+function renderGame() {
+    const mount = document.getElementById('game-mount');
+    const footer = document.getElementById('game-footer');
+    mount.innerHTML = ''; footer.innerHTML = '';
 
-    if(t === "scramble") {
-        main.innerHTML = `<span class="label">Sentence Builder</span><div class="q-txt">${cur.en}</div><div class="drop-zone" id="drop"></div><div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;" id="pool"></div>`;
-        cur.es.split(' ').sort(()=>0.5-Math.random()).forEach(w => {
-            const c = document.createElement('div'); c.className='chip'; c.innerText=w;
-            c.onclick = () => (c.parentElement === pool ? main.querySelector('#drop') : pool).appendChild(c);
-            main.querySelector('#pool').appendChild(c);
+    const type = Math.random() > 0.5 ? 'scramble' : 'choice';
+
+    if(type === 'scramble') {
+        mount.innerHTML = `<div class="q-wrap"><div class="q-hint">Translate to Spanish</div><div class="q-main" style="font-size:1.6rem; opacity:0.6;">${active.cur.en}</div></div><div class="drop-zone" id="drop"></div><div id="pool" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;"></div>`;
+        active.cur.es.split(' ').sort(()=>0.5-Math.random()).forEach(w => {
+            const chip = document.createElement('div'); chip.className = 'word-chip'; chip.innerText = w;
+            chip.onclick = () => { (chip.parentElement.id === 'pool' ? document.getElementById('drop') : document.getElementById('pool')).appendChild(chip); };
+            document.getElementById('pool').appendChild(chip);
         });
-        foot.innerHTML = `<button class="btn btn-run" onclick="check()">VERIFY</button>`;
-    } else if(t === "multi") {
-        main.innerHTML = `<span class="label">Quick Translate</span><div class="q-txt">${cur.es}</div>`;
-        const g = document.createElement('div'); g.className='opt-grid';
-        [cur.en, "Incorrect Answer", "Wrong translation"].sort(()=>0.5-Math.random()).forEach(o => {
-            const b = document.createElement('div'); b.className='opt-btn'; b.innerText=o;
-            b.onclick = () => { if(o===cur.en) next(); else b.style.borderColor='var(--red)'; };
-            g.appendChild(b);
+        footer.innerHTML = `<button class="btn-footer" onclick="validate()">VALIDATE</button>`;
+    } else {
+        mount.innerHTML = `<div class="q-wrap"><div class="q-hint">Select Translation</div><div class="q-main">${active.cur.es}</div></div><div class="opt-stack" id="opts"></div>`;
+        const choices = [active.cur.en, "Incorrect Meaning", "Wrong Option", "Not this"].sort(()=>0.5-Math.random());
+        choices.forEach(c => {
+            const b = document.createElement('button'); b.className = 'opt-btn'; b.innerText = c;
+            b.onclick = () => {
+                if(c === active.cur.en) { state.xp += 15; b.classList.add('correct'); setTimeout(next, 500); }
+                else { b.classList.add('wrong'); }
+            };
+            document.getElementById('opts').appendChild(b);
         });
-        main.appendChild(g);
-    } else if(t === "audio") {
-        main.innerHTML = `<span class="label">Shadowing Training</span><div class="q-txt">🔊 Listening...</div>`;
-        talk();
-        const g = document.createElement('div'); g.className='opt-grid';
-        [cur.en, "Wrong Meaning", "Not this"].sort(()=>0.5-Math.random()).forEach(o => {
-            const b = document.createElement('div'); b.className='opt-btn'; b.innerText=o;
-            b.onclick = () => { if(o===cur.en) next(); else b.style.borderColor='var(--red)'; };
-            g.appendChild(b);
-        });
-        main.appendChild(g);
-    } else { // Flash
-        main.innerHTML = `<span class="label">Memory Recall</span><div class="q-txt" id="txt-f">${cur.es}</div><p style="opacity:0.5; font-size:12px;">Tap to Flip</p>`;
-        main.onclick = () => document.getElementById('txt-f').innerText = cur.en;
-        foot.innerHTML = `<button class="btn btn-run" onclick="next()">NEXT CARD</button>`;
     }
 }
 
-function check() {
+function validate() {
     const guess = Array.from(document.getElementById('drop').children).map(c=>c.innerText).join(' ');
-    if(guess === cur.es) next(); else { alert("Correct: " + cur.es); next(); }
+    if(guess === active.cur.es) { state.xp += 25; next(); }
+    else { alert("Correction: " + active.cur.es); next(); }
 }
 
-function saveAndExit() {
-    const elapsed = Math.floor((Date.now() - sessionStart) / 60000);
-    user.mins += Math.max(elapsed, 1);
-    localStorage.setItem('blink_1000h_v2', JSON.stringify(user));
-    location.reload();
+function finalize() {
+    if(active.mod.id === state.unlocked) state.unlocked++;
+    const duration = Math.floor((Date.now() - active.start) / 60000);
+    state.mins += Math.max(duration, 1);
+    save(); quitGame();
 }
 
-function updateHome() {
-    document.getElementById('val-xp').innerText = user.xp;
-    document.getElementById('val-hr').innerText = (user.mins / 60).toFixed(1);
-    const p = Math.min((user.mins / 60000) * 100, 100);
-    document.getElementById('fill-prog').style.width = p + "%";
-    document.getElementById('txt-prog').innerText = `${user.mins} / 60,000 MIN`;
-    
-    const r = document.getElementById('rank');
-    if(user.mins > 6000) r.innerText = "OFICIAL";
-    if(user.mins > 30000) r.innerText = "MAESTRO";
-    if(user.mins >= 59000) r.innerText = "LEYENDA ETERNA";
+function quitGame() { showScreen('scr-dash'); init(); }
+
+// UTILITIES
+function updateUI() {
+    document.getElementById('disp-xp').innerText = state.xp;
+    document.getElementById('disp-min').innerText = state.mins;
+    document.getElementById('disp-streak').innerText = `🔥 ${state.streak}`;
+    const pct = (state.mins / 60000) * 100;
+    document.getElementById('disp-pct').innerText = pct.toFixed(2) + "%";
+    document.getElementById('bar-main').style.width = Math.min(pct, 100) + "%";
+    let r = "RECRUIT";
+    if(state.mins > 1000) r = "PAISA";
+    if(state.mins > 10000) r = "VETERAN";
+    if(state.mins > 40000) r = "LEGEND";
+    document.getElementById('disp-rank').innerText = r;
 }
 
-function talk() { 
-    const u = new SpeechSynthesisUtterance(cur.es); 
-    u.lang = 'es-MX'; window.speechSynthesis.speak(u); 
+function toggleTabs(idx) {
+    const tabs = document.querySelectorAll('.btn-tab');
+    tabs.forEach((t, i) => i === idx ? t.classList.add('active') : t.classList.remove('active'));
 }
 
-function show(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+function save() { localStorage.setItem('titan_master_v12', JSON.stringify(state)); }
+function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function audioPlay() { const u = new SpeechSynthesisUtterance(active.cur.es); u.lang = 'es-MX'; window.speechSynthesis.speak(u); }
+function genDots() {
+    const d = document.getElementById('game-dots'); d.innerHTML = '';
+    for(let i=0; i<active.total; i++) {
+        const dot = document.createElement('div');
+        dot.style.width='7px'; dot.style.height='7px'; dot.style.borderRadius='50%'; dot.style.background='var(--border)';
+        d.appendChild(dot);
+    }
 }
+function updateDots() {
+    const dots = document.getElementById('game-dots').children;
+    if(dots[active.count-1]) dots[active.count-1].style.background = 'var(--accent)';
+}
+
+init();
 </script>
 </body>
 </html>
