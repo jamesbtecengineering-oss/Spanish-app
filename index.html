@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Blink Elite: 100H Master</title>
+    <title>Blink Omni: 1000H Engine</title>
     <style>
         :root { 
             --gold: #fbbf24; --blue: #3b82f6; --green: #10b981; --red: #ef4444;
@@ -14,236 +14,210 @@
         
         .screen { display: none; flex-direction: column; height: 100%; width: 100%; padding: 20px; overflow-y: auto; }
         .active { display: flex; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-        /* Dashboard Components */
-        .prog-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .bar-bg { width: 100%; height: 12px; background: #000; border-radius: 6px; margin-top: 10px; overflow: hidden; }
-        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--blue)); width: 0%; transition: 1.5s ease-in-out; }
+        /* Progress Engine (Scale: 60,000 Minutes) */
+        .prog-container { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .bar-bg { width: 100%; height: 10px; background: #000; border-radius: 5px; margin-top: 10px; overflow: hidden; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--blue)); width: 0%; transition: 2s ease-in-out; }
         
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        .stat-item { background: var(--card); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #334155; }
-        .stat-val { display: block; font-size: 22px; font-weight: 900; color: var(--gold); }
-        .stat-lbl { font-size: 10px; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-card { background: var(--card); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #334155; }
+        .stat-val { display: block; font-size: 20px; font-weight: 900; color: var(--gold); }
 
-        /* Inputs & Buttons */
-        select, input { width: 100%; padding: 16px; background: var(--card); border: 1px solid #334155; border-radius: 12px; color: white; margin-bottom: 10px; font-size: 15px; outline: none; }
-        .btn-primary { width: 100%; padding: 20px; border-radius: 18px; border: none; color: white; font-weight: 800; font-size: 16px; background: var(--accent); cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.3); }
-        .btn-primary:active { transform: translateY(3px); box-shadow: none; }
-        
-        /* Game UI */
-        .game-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; }
+        /* Selection & Buttons */
+        select, .btn { width: 100%; padding: 16px; background: var(--card); border: 1px solid #334155; border-radius: 12px; color: white; margin-bottom: 12px; font-size: 14px; outline: none; }
+        .btn-run { background: var(--accent); font-weight: 800; border: none; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
+        .btn-run:active { transform: translateY(2px); box-shadow: none; }
+
+        /* Flow Mode Elements */
         .game-main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .q-text { font-size: 2rem; font-weight: 800; margin-bottom: 20px; line-height: 1.1; }
-        .opt-grid { display: grid; grid-template-columns: 1fr; gap: 10px; width: 100%; }
-        .opt-btn { background: var(--card); padding: 18px; border-radius: 14px; border: 1px solid #334155; color: white; font-weight: 600; text-align: center; }
+        .q-txt { font-size: 1.7rem; font-weight: 800; margin-bottom: 20px; line-height: 1.2; }
+        .opt-grid { display: grid; grid-template-columns: 1fr; gap: 8px; width: 100%; }
+        .opt-btn { background: var(--card); padding: 16px; border-radius: 12px; border: 1px solid #334155; color: white; font-weight: 600; }
         
-        /* Scramble */
-        .drop-zone { min-height: 90px; width: 100%; border: 2px dashed #334155; border-radius: 16px; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; padding: 15px; justify-content: center; background: rgba(0,0,0,0.2); }
-        .chip { background: var(--accent); padding: 12px 18px; border-radius: 10px; font-weight: 700; font-size: 14px; box-shadow: 0 3px 0 rgba(0,0,0,0.3); }
-
-        /* Speed Controls */
-        .speed-row { display: flex; justify-content: center; gap: 10px; margin: 10px 0; }
-        .speed-btn { padding: 6px 12px; border-radius: 8px; border: 1px solid var(--accent); background: transparent; color: white; font-size: 12px; }
-        .speed-btn.active { background: var(--accent); }
+        .drop-zone { min-height: 80px; width: 100%; border: 2px dashed #334155; border-radius: 16px; margin: 15px 0; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; justify-content: center; background: rgba(0,0,0,0.2); }
+        .chip { background: var(--accent); padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+        
+        .label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--blue); font-weight: 900; margin-bottom: 5px; display: block; }
     </style>
 </head>
-<body id="app-body">
+<body>
 
 <div id="scr-home" class="screen active">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-        <h1 style="margin:0; font-size:24px; color:var(--accent);">BLINK ELITE</h1>
-        <div id="rank-badge" style="font-size:10px; font-weight:900; border:1px solid var(--gold); padding:5px 12px; border-radius:20px; color:var(--gold);">RECLUTA</div>
+        <h1 style="margin:0; font-size:24px; color:var(--accent);">BLINK OMNI</h1>
+        <div id="rank" style="font-size:10px; font-weight:900; color:var(--gold); border:1px solid var(--gold); padding:4px 10px; border-radius:20px;">RECLUTA</div>
     </div>
 
-    <div class="prog-card">
-        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800;">
-            <span>100-HOUR MASTERY</span>
-            <span id="txt-progress">0 / 6000 MIN</span>
+    <div class="prog-container">
+        <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:800;">
+            <span>TOTAL PROGRESS (1000 HOURS)</span>
+            <span id="txt-prog">0 / 60,000 MIN</span>
         </div>
-        <div class="bar-bg"><div id="fill-progress" class="bar-fill"></div></div>
+        <div class="bar-bg"><div id="fill-prog" class="bar-fill"></div></div>
     </div>
 
-    <div class="stat-grid">
-        <div class="stat-item"><span id="val-xp" class="stat-val">0</span><span class="stat-lbl">XP Earned</span></div>
-        <div class="stat-item"><span id="val-mins" class="stat-val">0</span><span class="stat-lbl">Mins Studied</span></div>
+    <div class="stats">
+        <div class="stat-card"><span id="val-xp" class="stat-val">0</span><span class="label">XP Points</span></div>
+        <div class="stat-card"><span id="val-hr" class="stat-val">0.0</span><span class="label">Hours</span></div>
     </div>
 
-    <label class="stat-lbl">Curriculum Level</label>
+    <label class="label">Select Level ($A1.1$ - $B2.3$)</label>
     <select id="sel-lvl">
-        <optgroup label="Beginner (A1-A2)">
-            <option value="A1">A1: Medellín Greetings</option>
-            <option value="A2">A2: Daily Needs</option>
+        <optgroup label="Beginner Foundation">
+            <option value="A1.1">A1.1: Core Verbs & Pronouns</option>
+            <option value="A1.2">A1.2: Daily Living & Needs</option>
+            <option value="A1.3">A1.3: Basic Directions</option>
         </optgroup>
-        <optgroup label="Intermediate (B1-B2)">
-            <option value="B1">B1: Street Slang</option>
-            <option value="B2">B2: Cultural Idioms</option>
+        <optgroup label="Intermediate Mastery">
+            <option value="A2.1">A2.1: Social Narratives</option>
+            <option value="A2.3">A2.3: Expressing Needs</option>
+            <option value="B1.1">B1.1: Debate & Opinion</option>
         </optgroup>
-        <option value="LAB">★ My Custom Slang Lab</option>
+        <optgroup label="Advanced Professional">
+            <option value="B2.1">B2.1: Workplace Spanish</option>
+            <option value="B2.3">B2.3: Cultural Complexities</option>
+        </optgroup>
     </select>
 
-    <button class="btn-primary" onclick="startFlow()">START FLOW MODE</button>
+    <label class="label">Specialized Domain</label>
+    <select id="sel-sub">
+        <option value="general">General South American</option>
+        <option value="street">Street Slang (CO, AR, PE)</option>
+        <option value="medical">Medical & Wellness</option>
+        <option value="business">Business & Finance</option>
+        <option value="legal">Legal & Documentation</option>
+        <option value="romance">Dating & Social Life</option>
+    </select>
 
-    <div class="prog-card" style="margin-top:20px; border-style: dashed;">
-        <span class="stat-lbl" style="color:var(--accent);">2. Slang Lab (Add Custom Context)</span>
-        <div style="display:flex; gap:8px; margin-top:10px;">
-            <input type="text" id="lab-es" placeholder="Spanish Phrase" style="margin:0;">
-            <input type="text" id="lab-en" placeholder="Meaning" style="margin:0;">
-        </div>
-        <button class="btn-primary" style="padding:10px; font-size:12px; background:#334155; margin-top:10px;" onclick="addSlang()">SAVE PHRASE</button>
-    </div>
-
-    <div class="prog-card">
-        <span class="stat-lbl">3. Shadowing Speed (Audio)</span>
-        <div class="speed-row">
-            <button class="speed-btn" id="sp05" onclick="setSpeed(0.5)">0.5x</button>
-            <button class="speed-btn active" id="sp10" onclick="setSpeed(1.0)">1.0x</button>
-            <button class="speed-btn" id="sp15" onclick="setSpeed(1.5)">1.5x</button>
-        </div>
-    </div>
+    <button class="btn btn-run" onclick="launchFlow()">START FLOW MODE</button>
 </div>
 
 <div id="scr-flow" class="screen">
-    <div class="game-header">
-        <button onclick="exitFlow()" style="background:none; border:none; color:white; font-size:32px;">✕</button>
-        <div id="flow-tag" class="stat-lbl" style="background:var(--accent); padding:5px 10px; border-radius:6px; color:white;">FLOW</div>
-        <button onclick="speak()" style="background:none; border:none; color:white; font-size:32px;">🔊</button>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <button onclick="saveAndExit()" style="background:none; border:none; color:white; font-size:32px;">✕</button>
+        <div id="tag-mode" class="label" style="background:var(--accent); padding:5px 12px; border-radius:6px; color:white;">MODE</div>
+        <button onclick="talk()" style="background:none; border:none; color:white; font-size:32px;">🔊</button>
     </div>
     <div id="flow-content" class="game-main"></div>
-    <div id="flow-footer" style="padding:15px 0;"></div>
+    <div id="flow-footer"></div>
 </div>
 
 <script>
-// MASTER DATA
-const masterData = {
-    "A1": [{es:"¡Qué más, parce!", en:"What's up, friend!"},{es:"¿Bien o qué?", en:"Good or what?"},{es:"Todo bien", en:"All good"}],
-    "A2": [{es:"Me regala un tinto", en:"Can I have a coffee"},{es:"¿Cuánto vale?", en:"How much is it?"}],
-    "B1": [{es:"¡Qué nota!", en:"How cool!"},{es:"No me dé papaya", en:"Don't give a chance"}],
-    "B2": [{es:"Meter la pata", en:"To mess up"},{es:"Estar en la jugada", en:"To be sharp/ready"}]
+// SCALABLE DATA ARCHITECTURE
+const db = {
+    "A1.1": {
+        general: [{es:"Yo necesito ayuda", en:"I need help"},{es:"¿Dónde está?", en:"Where is it?"}],
+        street: [{es:"¡Qué más, parce!", en:"What's up, friend!"}],
+        medical: [{es:"Me duele la cabeza", en:"My head hurts"}]
+    },
+    "B2.3": {
+        business: [{es:"El retorno de inversión", en:"The return on investment"}],
+        legal: [{es:"Sin perjuicio de lo anterior", en:"Without prejudice to the foregoing"}],
+        general: [{es:"Ojalá hubiera sabido", en:"I wish I had known"}]
+    }
 };
 
-let user = { xp: 0, minutes: 0, speed: 1.0, lab: [] };
-let activeDeck = [], curItem = null, startTime = null;
+let user = { xp: 0, mins: 0, lastLvl: "A1.1" };
+let deck = [], cur = null, sessionStart = null;
 
-// INIT
 window.onload = () => {
-    const saved = localStorage.getItem('blink_100h_save');
+    const saved = localStorage.getItem('blink_1000h_v2');
     if(saved) user = JSON.parse(saved);
-    updateDashboard();
+    updateHome();
 };
 
-function addSlang() {
-    const es = document.getElementById('lab-es').value;
-    const en = document.getElementById('lab-en').value;
-    if(es && en) {
-        user.lab.push({es, en});
-        document.getElementById('lab-es').value = '';
-        document.getElementById('lab-en').value = '';
-        save();
-        alert("Phrase Saved!");
-    }
-}
-
-function setSpeed(s) {
-    user.speed = s;
-    document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('sp' + s.toString().replace('.','')).classList.add('active');
-    save();
-}
-
-function startFlow() {
-    const lvl = document.getElementById('sel-lvl').value;
-    activeDeck = lvl === "LAB" ? user.lab : masterData[lvl];
-    if(activeDeck.length < 1) return alert("Your Lab is empty! Add phrases first.");
-    startTime = Date.now();
+function launchFlow() {
+    const l = document.getElementById('sel-lvl').value;
+    const s = document.getElementById('sel-sub').value;
+    const source = (db[l] && db[l][s]) ? db[l][s] : (db["A1.1"]["general"]);
+    deck = [...source].sort(() => 0.5 - Math.random());
+    sessionStart = Date.now();
     show('scr-flow');
-    runNext();
+    next();
 }
 
-function runNext() {
+function next() {
     user.xp += 25;
-    curItem = activeDeck[Math.floor(Math.random() * activeDeck.length)];
+    cur = deck[Math.floor(Math.random()*deck.length)];
     const types = ["multi", "scramble", "audio", "flash"];
-    render(types[Math.floor(Math.random() * types.length)]);
+    render(types[Math.floor(Math.random()*types.length)]);
 }
 
-function render(type) {
-    const content = document.getElementById('flow-content');
-    const footer = document.getElementById('flow-footer');
-    content.innerHTML = ''; footer.innerHTML = '';
-    document.getElementById('flow-tag').innerText = type.toUpperCase();
+function render(t) {
+    const main = document.getElementById('flow-content');
+    const foot = document.getElementById('flow-footer');
+    main.innerHTML = ''; foot.innerHTML = '';
+    document.getElementById('tag-mode').innerText = t.toUpperCase();
 
-    if(type === "multi") {
-        content.innerHTML = `<div class="q-text">${curItem.es}</div><p class="stat-lbl">Choose Translation</p>`;
-        const grid = document.createElement('div'); grid.className = 'opt-grid';
-        [curItem.en, "A wrong answer", "Not this one"].sort(()=>Math.random()-0.5).forEach(o => {
-            const b = document.createElement('div'); b.className = 'opt-btn'; b.innerText = o;
-            b.onclick = () => { if(o === curItem.en) runNext(); else b.style.borderColor = "var(--red)"; };
-            grid.appendChild(b);
+    if(t === "scramble") {
+        main.innerHTML = `<span class="label">Sentence Builder</span><div class="q-txt">${cur.en}</div><div class="drop-zone" id="drop"></div><div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;" id="pool"></div>`;
+        cur.es.split(' ').sort(()=>0.5-Math.random()).forEach(w => {
+            const c = document.createElement('div'); c.className='chip'; c.innerText=w;
+            c.onclick = () => (c.parentElement === pool ? main.querySelector('#drop') : pool).appendChild(c);
+            main.querySelector('#pool').appendChild(c);
         });
-        content.appendChild(grid);
-    } else if(type === "scramble") {
-        content.innerHTML = `<div class="stat-lbl" style="margin-bottom:10px;">BUILD: ${curItem.en}</div><div class="drop-zone" id="drop"></div><div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;" id="pool"></div>`;
-        const pool = content.querySelector('#pool');
-        curItem.es.split(' ').sort(()=>Math.random()-0.5).forEach(w => {
-            const c = document.createElement('div'); c.className = 'chip'; c.innerText = w;
-            c.onclick = () => { (c.parentElement === pool ? content.querySelector('#drop') : pool).appendChild(c); };
-            pool.appendChild(c);
+        foot.innerHTML = `<button class="btn btn-run" onclick="check()">VERIFY</button>`;
+    } else if(t === "multi") {
+        main.innerHTML = `<span class="label">Quick Translate</span><div class="q-txt">${cur.es}</div>`;
+        const g = document.createElement('div'); g.className='opt-grid';
+        [cur.en, "Incorrect Answer", "Wrong translation"].sort(()=>0.5-Math.random()).forEach(o => {
+            const b = document.createElement('div'); b.className='opt-btn'; b.innerText=o;
+            b.onclick = () => { if(o===cur.en) next(); else b.style.borderColor='var(--red)'; };
+            g.appendChild(b);
         });
-        footer.innerHTML = `<button class="btn-primary" onclick="checkS()">VERIFY</button>`;
-    } else if(type === "audio") {
-        content.innerHTML = `<div class="q-text">🔊 Listen...</div><p class="stat-lbl">What did they say?</p>`;
-        speak();
-        const grid = document.createElement('div'); grid.className = 'opt-grid';
-        [curItem.en, "Incorrect phrase", "Try again"].sort(()=>Math.random()-0.5).forEach(o => {
-            const b = document.createElement('div'); b.className = 'opt-btn'; b.innerText = o;
-            b.onclick = () => { if(o === curItem.en) runNext(); else b.style.borderColor = "var(--red)"; };
-            grid.appendChild(b);
+        main.appendChild(g);
+    } else if(t === "audio") {
+        main.innerHTML = `<span class="label">Shadowing Training</span><div class="q-txt">🔊 Listening...</div>`;
+        talk();
+        const g = document.createElement('div'); g.className='opt-grid';
+        [cur.en, "Wrong Meaning", "Not this"].sort(()=>0.5-Math.random()).forEach(o => {
+            const b = document.createElement('div'); b.className='opt-btn'; b.innerText=o;
+            b.onclick = () => { if(o===cur.en) next(); else b.style.borderColor='var(--red)'; };
+            g.appendChild(b);
         });
-        content.appendChild(grid);
-    } else { // flash
-        content.innerHTML = `<div class="q-text" id="f-main">${curItem.es}</div><p class="stat-lbl">Tap to Flip</p>`;
-        content.onclick = () => document.getElementById('f-main').innerText = curItem.en;
-        footer.innerHTML = `<button class="btn-primary" onclick="runNext()">CONTINUE</button>`;
+        main.appendChild(g);
+    } else { // Flash
+        main.innerHTML = `<span class="label">Memory Recall</span><div class="q-txt" id="txt-f">${cur.es}</div><p style="opacity:0.5; font-size:12px;">Tap to Flip</p>`;
+        main.onclick = () => document.getElementById('txt-f').innerText = cur.en;
+        foot.innerHTML = `<button class="btn btn-run" onclick="next()">NEXT CARD</button>`;
     }
 }
 
-function checkS() {
-    const guess = Array.from(document.getElementById('drop').children).map(c => c.innerText).join(' ');
-    if(guess === curItem.es) runNext(); else alert("Try again!");
+function check() {
+    const guess = Array.from(document.getElementById('drop').children).map(c=>c.innerText).join(' ');
+    if(guess === cur.es) next(); else { alert("Correct: " + cur.es); next(); }
 }
 
-function exitFlow() {
-    const elapsed = Math.floor((Date.now() - startTime) / 60000);
-    user.minutes += Math.max(elapsed, 1);
-    save();
+function saveAndExit() {
+    const elapsed = Math.floor((Date.now() - sessionStart) / 60000);
+    user.mins += Math.max(elapsed, 1);
+    localStorage.setItem('blink_1000h_v2', JSON.stringify(user));
     location.reload();
 }
 
-function save() { localStorage.setItem('blink_100h_save', JSON.stringify(user)); }
-
-function updateDashboard() {
+function updateHome() {
     document.getElementById('val-xp').innerText = user.xp;
-    document.getElementById('val-mins').innerText = user.minutes;
-    const progress = Math.min((user.minutes / 6000) * 100, 100);
-    document.getElementById('fill-progress').style.width = progress + "%";
-    document.getElementById('txt-progress').innerText = `${user.minutes} / 6000 MIN`;
+    document.getElementById('val-hr').innerText = (user.mins / 60).toFixed(1);
+    const p = Math.min((user.mins / 60000) * 100, 100);
+    document.getElementById('fill-prog').style.width = p + "%";
+    document.getElementById('txt-prog').innerText = `${user.mins} / 60,000 MIN`;
     
-    const badge = document.getElementById('rank-badge');
-    if(user.minutes > 1000) badge.innerText = "SARGENTO";
-    if(user.minutes > 3000) badge.innerText = "CAPITÁN";
-    if(user.minutes > 5000) badge.innerText = "LEYENDA";
+    const r = document.getElementById('rank');
+    if(user.mins > 6000) r.innerText = "OFICIAL";
+    if(user.mins > 30000) r.innerText = "MAESTRO";
+    if(user.mins >= 59000) r.innerText = "LEYENDA ETERNA";
+}
+
+function talk() { 
+    const u = new SpeechSynthesisUtterance(cur.es); 
+    u.lang = 'es-MX'; window.speechSynthesis.speak(u); 
 }
 
 function show(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-}
-
-function speak() {
-    const u = new SpeechSynthesisUtterance(curItem.es);
-    u.lang = 'es-MX'; u.rate = user.speed;
-    window.speechSynthesis.speak(u);
 }
 </script>
 </body>
