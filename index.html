@@ -3,210 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Blink Elite: 100-Hour Legend</title>
+    <title>Blink Elite: 100H Master</title>
     <style>
-        :root { --p-gold: #fbbf24; --p-blue: #3b82f6; --p-green: #10b981; --p-bg: #020617; --p-card: #1e293b; --p-text: #f8fafc; --p-accent: #8b5cf6; }
-        .theme-medellin { --p-bg: #0f172a; --p-accent: #10b981; }
-        .theme-cyber { --p-bg: #000; --p-accent: #06b6d4; --p-card: #111; }
-
-        * { box-sizing: border-box; -webkit-user-select: none; touch-action: manipulation; font-family: 'Inter', sans-serif; transition: 0.3s; }
-        body { background: var(--p-bg); color: var(--p-text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        :root { 
+            --gold: #fbbf24; --blue: #3b82f6; --green: #10b981; --red: #ef4444;
+            --bg: #020617; --card: #1e293b; --text: #f8fafc; --accent: #8b5cf6; 
+        }
+        * { box-sizing: border-box; -webkit-user-select: none; touch-action: manipulation; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        .screen { display: none; flex-direction: column; height: 100%; width: 100%; padding: 25px; overflow-y: auto; }
-        .active { display: flex; }
+        .screen { display: none; flex-direction: column; height: 100%; width: 100%; padding: 20px; overflow-y: auto; }
+        .active { display: flex; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 100-Hour Progress Tracker */
-        .progress-circle { width: 100%; background: var(--p-card); border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
-        .bar-bg { width: 100%; height: 12px; background: #0f172a; border-radius: 6px; margin-top: 10px; overflow: hidden; }
-        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--p-accent), var(--p-blue)); width: 0%; transition: 1s ease-out; }
+        /* Dashboard Components */
+        .prog-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .bar-bg { width: 100%; height: 12px; background: #000; border-radius: 6px; margin-top: 10px; overflow: hidden; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--blue)); width: 0%; transition: 1.5s ease-in-out; }
+        
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .stat-item { background: var(--card); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #334155; }
+        .stat-val { display: block; font-size: 22px; font-weight: 900; color: var(--gold); }
+        .stat-lbl { font-size: 10px; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Navigation Tiles */
-        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .tile { background: var(--p-card); padding: 20px; border-radius: 18px; border: 1px solid #334155; text-align: center; }
-        .tile-val { display: block; font-size: 20px; font-weight: 900; color: var(--p-gold); }
-        .tile-lbl { font-size: 10px; opacity: 0.6; text-transform: uppercase; font-weight: 800; }
-
-        /* Input Styles */
-        select, input { width: 100%; padding: 16px; background: var(--p-card); border: 1px solid #334155; border-radius: 12px; color: white; margin-bottom: 12px; outline: none; }
-        .btn-hero { width: 100%; padding: 20px; border-radius: 16px; border: none; color: white; font-weight: 800; font-size: 16px; background: var(--p-accent); cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.3); }
-        .btn-hero:active { transform: translateY(3px); box-shadow: none; }
-
-        /* Slang Lab */
-        .lab-card { background: rgba(139, 92, 246, 0.1); border: 1px dashed var(--p-accent); padding: 15px; border-radius: 12px; margin-top: 20px; }
-
+        /* Inputs & Buttons */
+        select, input { width: 100%; padding: 16px; background: var(--card); border: 1px solid #334155; border-radius: 12px; color: white; margin-bottom: 10px; font-size: 15px; outline: none; }
+        .btn-primary { width: 100%; padding: 20px; border-radius: 18px; border: none; color: white; font-weight: 800; font-size: 16px; background: var(--accent); cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.3); }
+        .btn-primary:active { transform: translateY(3px); box-shadow: none; }
+        
         /* Game UI */
-        .game-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .q-text { font-size: 1.8rem; font-weight: 800; margin-bottom: 20px; }
+        .game-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; }
+        .game-main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .q-text { font-size: 2rem; font-weight: 800; margin-bottom: 20px; line-height: 1.1; }
         .opt-grid { display: grid; grid-template-columns: 1fr; gap: 10px; width: 100%; }
-        .opt-btn { background: var(--p-card); padding: 18px; border-radius: 14px; border: 1px solid #334155; color: white; font-weight: 600; }
-        .drop-box { min-height: 80px; width: 100%; border: 2px dashed #334155; border-radius: 16px; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; justify-content: center; }
-        .chip { background: var(--p-accent); padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; }
+        .opt-btn { background: var(--card); padding: 18px; border-radius: 14px; border: 1px solid #334155; color: white; font-weight: 600; text-align: center; }
+        
+        /* Scramble */
+        .drop-zone { min-height: 90px; width: 100%; border: 2px dashed #334155; border-radius: 16px; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; padding: 15px; justify-content: center; background: rgba(0,0,0,0.2); }
+        .chip { background: var(--accent); padding: 12px 18px; border-radius: 10px; font-weight: 700; font-size: 14px; box-shadow: 0 3px 0 rgba(0,0,0,0.3); }
+
+        /* Speed Controls */
+        .speed-row { display: flex; justify-content: center; gap: 10px; margin: 10px 0; }
+        .speed-btn { padding: 6px 12px; border-radius: 8px; border: 1px solid var(--accent); background: transparent; color: white; font-size: 12px; }
+        .speed-btn.active { background: var(--accent); }
     </style>
 </head>
-<body id="main-body">
+<body id="app-body">
 
 <div id="scr-home" class="screen active">
-    <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h1 style="margin:0; font-size:26px; color:var(--p-accent);">BLINK ELITE</h1>
-        <div id="badge" style="font-size:10px; font-weight:900; border:1px solid var(--p-gold); padding:4px 8px; border-radius:20px; color:var(--p-gold);">RECLUTA</div>
-    </header>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h1 style="margin:0; font-size:24px; color:var(--accent);">BLINK ELITE</h1>
+        <div id="rank-badge" style="font-size:10px; font-weight:900; border:1px solid var(--gold); padding:5px 12px; border-radius:20px; color:var(--gold);">RECLUTA</div>
+    </div>
 
-    <div class="progress-circle">
+    <div class="prog-card">
         <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800;">
-            <span>TOTAL PROGRESS</span>
-            <span id="txt-prog">0 / 100 HRS</span>
+            <span>100-HOUR MASTERY</span>
+            <span id="txt-progress">0 / 6000 MIN</span>
         </div>
-        <div class="bar-bg"><div id="fill-prog" class="bar-fill"></div></div>
+        <div class="bar-bg"><div id="fill-progress" class="bar-fill"></div></div>
     </div>
 
-    <div class="nav-grid">
-        <div class="tile"><span id="val-xp" class="tile-val">0</span><span class="tile-lbl">XP Points</span></div>
-        <div class="tile"><span id="val-mins" class="tile-val">0</span><span class="tile-lbl">Mins Done</span></div>
+    <div class="stat-grid">
+        <div class="stat-item"><span id="val-xp" class="stat-val">0</span><span class="stat-lbl">XP Earned</span></div>
+        <div class="stat-item"><span id="val-mins" class="stat-val">0</span><span class="stat-lbl">Mins Studied</span></div>
     </div>
 
-    <label class="tile-lbl">Target Level</label>
+    <label class="stat-lbl">Curriculum Level</label>
     <select id="sel-lvl">
-        <option value="A1">A1: Medellín Basics</option>
-        <option value="B1">B1: Street Talk</option>
-        <option value="B2">B2: Local Legend</option>
-        <option value="CUSTOM">★ My Custom Slang Lab</option>
+        <optgroup label="Beginner (A1-A2)">
+            <option value="A1">A1: Medellín Greetings</option>
+            <option value="A2">A2: Daily Needs</option>
+        </optgroup>
+        <optgroup label="Intermediate (B1-B2)">
+            <option value="B1">B1: Street Slang</option>
+            <option value="B2">B2: Cultural Idioms</option>
+        </optgroup>
+        <option value="LAB">★ My Custom Slang Lab</option>
     </select>
 
-    <button class="btn-hero" onclick="startFlow()">ENTER FLOW STATE</button>
+    <button class="btn-primary" onclick="startFlow()">START FLOW MODE</button>
 
-    <div class="lab-card">
-        <div class="tile-lbl" style="color:var(--p-accent); margin-bottom:10px;">Slang Lab: Add New Phrase</div>
-        <input type="text" id="lab-es" placeholder="Spanish (e.g. ¡Qué chimba!)">
-        <input type="text" id="lab-en" placeholder="English (e.g. That's cool!)">
-        <button class="btn-hero" style="padding:10px; font-size:12px;" onclick="addToLab()">SAVE TO MY DECK</button>
+    <div class="prog-card" style="margin-top:20px; border-style: dashed;">
+        <span class="stat-lbl" style="color:var(--accent);">2. Slang Lab (Add Custom Context)</span>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+            <input type="text" id="lab-es" placeholder="Spanish Phrase" style="margin:0;">
+            <input type="text" id="lab-en" placeholder="Meaning" style="margin:0;">
+        </div>
+        <button class="btn-primary" style="padding:10px; font-size:12px; background:#334155; margin-top:10px;" onclick="addSlang()">SAVE PHRASE</button>
+    </div>
+
+    <div class="prog-card">
+        <span class="stat-lbl">3. Shadowing Speed (Audio)</span>
+        <div class="speed-row">
+            <button class="speed-btn" id="sp05" onclick="setSpeed(0.5)">0.5x</button>
+            <button class="speed-btn active" id="sp10" onclick="setSpeed(1.0)">1.0x</button>
+            <button class="speed-btn" id="sp15" onclick="setSpeed(1.5)">1.5x</button>
+        </div>
     </div>
 </div>
 
 <div id="scr-flow" class="screen">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <button onclick="exitFlow()" style="background:none; border:none; color:white; font-size:28px;">✕</button>
-        <div id="flow-mode" class="tile-lbl" style="background:var(--p-accent); padding:4px 10px; border-radius:5px; color:white;">FLOW</div>
-        <button onclick="tts()" style="background:none; border:none; color:white; font-size:28px;">🔊</button>
+    <div class="game-header">
+        <button onclick="exitFlow()" style="background:none; border:none; color:white; font-size:32px;">✕</button>
+        <div id="flow-tag" class="stat-lbl" style="background:var(--accent); padding:5px 10px; border-radius:6px; color:white;">FLOW</div>
+        <button onclick="speak()" style="background:none; border:none; color:white; font-size:32px;">🔊</button>
     </div>
-    <div id="flow-content" class="game-area"></div>
-    <div id="flow-footer" style="margin-top:20px;"></div>
+    <div id="flow-content" class="game-main"></div>
+    <div id="flow-footer" style="padding:15px 0;"></div>
 </div>
 
 <script>
-let userData = {
-    name: "User", xp: 0, minutes: 0, 
-    customDeck: [],
-    levels: {
-        "A1": [{es:"¡Qué más, parce!", en:"What's up, friend!"},{es:"Todo bien", en:"All good"}],
-        "B1": [{es:"¡Qué nota!", en:"How cool!"},{es:"No me de papaya", en:"Don't give a chance"}],
-        "B2": [{es:"Ponerse las pilas", en:"To get moving/sharp"},{es:"Hágale pues", en:"Go for it"}]
-    }
+// MASTER DATA
+const masterData = {
+    "A1": [{es:"¡Qué más, parce!", en:"What's up, friend!"},{es:"¿Bien o qué?", en:"Good or what?"},{es:"Todo bien", en:"All good"}],
+    "A2": [{es:"Me regala un tinto", en:"Can I have a coffee"},{es:"¿Cuánto vale?", en:"How much is it?"}],
+    "B1": [{es:"¡Qué nota!", en:"How cool!"},{es:"No me dé papaya", en:"Don't give a chance"}],
+    "B2": [{es:"Meter la pata", en:"To mess up"},{es:"Estar en la jugada", en:"To be sharp/ready"}]
 };
 
-let currentItem = null, startTime = null, deck = [];
+let user = { xp: 0, minutes: 0, speed: 1.0, lab: [] };
+let activeDeck = [], curItem = null, startTime = null;
 
-// PERSISTENCE
+// INIT
 window.onload = () => {
-    const saved = localStorage.getItem('blink100h');
-    if(saved) userData = JSON.parse(saved);
-    updateUI();
+    const saved = localStorage.getItem('blink_100h_save');
+    if(saved) user = JSON.parse(saved);
+    updateDashboard();
 };
 
-function updateUI() {
-    document.getElementById('val-xp').innerText = userData.xp;
-    document.getElementById('val-mins').innerText = userData.minutes;
-    const progressPct = Math.min((userData.minutes / 6000) * 100, 100); // 6000 mins = 100 hours
-    document.getElementById('fill-prog').style.width = progressPct + "%";
-    document.getElementById('txt-prog').innerText = (userData.minutes/60).toFixed(1) + " / 100 HRS";
-    
-    const badge = document.getElementById('badge');
-    if(userData.minutes > 3000) badge.innerText = "CAPITÁN";
-    if(userData.minutes > 5400) badge.innerText = "LEYENDA";
-}
-
-function addToLab() {
+function addSlang() {
     const es = document.getElementById('lab-es').value;
     const en = document.getElementById('lab-en').value;
     if(es && en) {
-        userData.customDeck.push({es, en});
+        user.lab.push({es, en});
         document.getElementById('lab-es').value = '';
         document.getElementById('lab-en').value = '';
         save();
-        alert("Phrase added to Custom Lab!");
+        alert("Phrase Saved!");
     }
+}
+
+function setSpeed(s) {
+    user.speed = s;
+    document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('sp' + s.toString().replace('.','')).classList.add('active');
+    save();
 }
 
 function startFlow() {
     const lvl = document.getElementById('sel-lvl').value;
-    deck = lvl === "CUSTOM" ? userData.customDeck : userData.levels[lvl];
-    if(deck.length < 1) return alert("Add phrases to your lab first!");
+    activeDeck = lvl === "LAB" ? user.lab : masterData[lvl];
+    if(activeDeck.length < 1) return alert("Your Lab is empty! Add phrases first.");
     startTime = Date.now();
     show('scr-flow');
-    nextTask();
+    runNext();
 }
 
-function nextTask() {
-    userData.xp += 15;
-    currentItem = deck[Math.floor(Math.random() * deck.length)];
+function runNext() {
+    user.xp += 25;
+    curItem = activeDeck[Math.floor(Math.random() * activeDeck.length)];
     const types = ["multi", "scramble", "audio", "flash"];
-    renderTask(types[Math.floor(Math.random() * types.length)]);
+    render(types[Math.floor(Math.random() * types.length)]);
 }
 
-function renderTask(type) {
+function render(type) {
     const content = document.getElementById('flow-content');
     const footer = document.getElementById('flow-footer');
     content.innerHTML = ''; footer.innerHTML = '';
-    document.getElementById('flow-mode').innerText = type.toUpperCase();
+    document.getElementById('flow-tag').innerText = type.toUpperCase();
 
-    if(type === "flash") {
-        content.innerHTML = `<div class="q-text" id="f-txt">${currentItem.es}</div><p style="opacity:0.4">Tap to Flip</p>`;
-        content.onclick = () => { document.getElementById('f-txt').innerText = currentItem.en; };
-        footer.innerHTML = `<button class="btn-hero" onclick="nextTask()">CONTINUE</button>`;
-    } else if(type === "multi") {
-        content.innerHTML = `<div class="q-text">${currentItem.es}</div><p class="tile-lbl">Choose Translation</p>`;
+    if(type === "multi") {
+        content.innerHTML = `<div class="q-text">${curItem.es}</div><p class="stat-lbl">Choose Translation</p>`;
         const grid = document.createElement('div'); grid.className = 'opt-grid';
-        [currentItem.en, "A coffee please", "Tomorrow morning"].sort(()=>Math.random()-0.5).forEach(o => {
+        [curItem.en, "A wrong answer", "Not this one"].sort(()=>Math.random()-0.5).forEach(o => {
             const b = document.createElement('div'); b.className = 'opt-btn'; b.innerText = o;
-            b.onclick = () => { if(o === currentItem.en) nextTask(); else b.style.borderColor = "var(--p-red)"; };
+            b.onclick = () => { if(o === curItem.en) runNext(); else b.style.borderColor = "var(--red)"; };
             grid.appendChild(b);
         });
         content.appendChild(grid);
     } else if(type === "scramble") {
-        content.innerHTML = `<div class="tile-lbl">Build: ${currentItem.en}</div><div class="drop-box" id="drop"></div><div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center;" id="pool"></div>`;
+        content.innerHTML = `<div class="stat-lbl" style="margin-bottom:10px;">BUILD: ${curItem.en}</div><div class="drop-zone" id="drop"></div><div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;" id="pool"></div>`;
         const pool = content.querySelector('#pool');
-        currentItem.es.split(' ').sort(()=>Math.random()-0.5).forEach(w => {
+        curItem.es.split(' ').sort(()=>Math.random()-0.5).forEach(w => {
             const c = document.createElement('div'); c.className = 'chip'; c.innerText = w;
             c.onclick = () => { (c.parentElement === pool ? content.querySelector('#drop') : pool).appendChild(c); };
             pool.appendChild(c);
         });
-        footer.innerHTML = `<button class="btn-hero" onclick="checkS()">VERIFY</button>`;
-    } else { // audio
-        content.innerHTML = `<div class="q-text">🔊 Listening...</div>`; tts();
+        footer.innerHTML = `<button class="btn-primary" onclick="checkS()">VERIFY</button>`;
+    } else if(type === "audio") {
+        content.innerHTML = `<div class="q-text">🔊 Listen...</div><p class="stat-lbl">What did they say?</p>`;
+        speak();
         const grid = document.createElement('div'); grid.className = 'opt-grid';
-        [currentItem.en, "Wrong one", "Incorrect"].sort(()=>Math.random()-0.5).forEach(o => {
+        [curItem.en, "Incorrect phrase", "Try again"].sort(()=>Math.random()-0.5).forEach(o => {
             const b = document.createElement('div'); b.className = 'opt-btn'; b.innerText = o;
-            b.onclick = () => { if(o === currentItem.en) nextTask(); else b.style.borderColor = "var(--p-red)"; };
+            b.onclick = () => { if(o === curItem.en) runNext(); else b.style.borderColor = "var(--red)"; };
             grid.appendChild(b);
         });
         content.appendChild(grid);
+    } else { // flash
+        content.innerHTML = `<div class="q-text" id="f-main">${curItem.es}</div><p class="stat-lbl">Tap to Flip</p>`;
+        content.onclick = () => document.getElementById('f-main').innerText = curItem.en;
+        footer.innerHTML = `<button class="btn-primary" onclick="runNext()">CONTINUE</button>`;
     }
 }
 
 function checkS() {
     const guess = Array.from(document.getElementById('drop').children).map(c => c.innerText).join(' ');
-    if(guess === currentItem.es) nextTask(); else alert("Oops! Order matters.");
+    if(guess === curItem.es) runNext(); else alert("Try again!");
 }
 
 function exitFlow() {
     const elapsed = Math.floor((Date.now() - startTime) / 60000);
-    userData.minutes += elapsed;
+    user.minutes += Math.max(elapsed, 1);
     save();
     location.reload();
 }
 
-function save() { localStorage.setItem('blink100h', JSON.stringify(userData)); }
-function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-function tts() { const u = new SpeechSynthesisUtterance(currentItem.es); u.lang = 'es-MX'; window.speechSynthesis.speak(u); }
+function save() { localStorage.setItem('blink_100h_save', JSON.stringify(user)); }
+
+function updateDashboard() {
+    document.getElementById('val-xp').innerText = user.xp;
+    document.getElementById('val-mins').innerText = user.minutes;
+    const progress = Math.min((user.minutes / 6000) * 100, 100);
+    document.getElementById('fill-progress').style.width = progress + "%";
+    document.getElementById('txt-progress').innerText = `${user.minutes} / 6000 MIN`;
+    
+    const badge = document.getElementById('rank-badge');
+    if(user.minutes > 1000) badge.innerText = "SARGENTO";
+    if(user.minutes > 3000) badge.innerText = "CAPITÁN";
+    if(user.minutes > 5000) badge.innerText = "LEYENDA";
+}
+
+function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+function speak() {
+    const u = new SpeechSynthesisUtterance(curItem.es);
+    u.lang = 'es-MX'; u.rate = user.speed;
+    window.speechSynthesis.speak(u);
+}
 </script>
 </body>
 </html>
