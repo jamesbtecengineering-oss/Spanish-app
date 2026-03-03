@@ -2,462 +2,316 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BLINK TITAN | THE SINGULARITY v22.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BLINK TITAN | INFINITE ARCHIVE</title>
     <style>
         :root {
             --bg: #020617; --card: #0f172a; --accent: #8b5cf6; --gold: #fbbf24;
             --text: #f8fafc; --green: #10b981; --red: #ef4444; --border: #1e293b;
-            --blue: #3b82f6; --glass: rgba(255, 255, 255, 0.05);
-            --shadow: 0 20px 50px rgba(0,0,0,0.5);
+            --blue: #3b82f6; --safe-top: env(safe-area-inset-top);
         }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; user-select: none; }
         body { 
             background: var(--bg); color: var(--text); margin: 0; 
-            font-family: 'Inter', -apple-system, system-ui, sans-serif; 
-            height: 100vh; overflow: hidden; display: flex; flex-direction: column;
+            font-family: -apple-system, system-ui, sans-serif;
+            height: 100vh; overflow: hidden; position: fixed; width: 100%;
         }
 
-        /* --- NAVIGATION & SCREENS --- */
-        .screen { display: none; flex-direction: column; height: 100%; width: 100%; padding: 25px; overflow-y: auto; }
-        .screen.active { display: flex; animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-        
-        @keyframes slideUp { 
-            from { opacity: 0; transform: translateY(30px); } 
-            to { opacity: 1; transform: translateY(0); } 
+        .screen { 
+            position: absolute; inset: 0; display: none; flex-direction: column; 
+            padding: calc(20px + var(--safe-top)) 20px 20px; background: var(--bg);
         }
-
-        /* --- DASHBOARD UI --- */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .brand { font-size: 28px; font-weight: 950; letter-spacing: -1.5px; }
-        .brand span { color: var(--accent); }
+        .screen.active { display: flex; animation: viewSlide 0.4s cubic-bezier(0.1, 0.9, 0.2, 1); }
+        @keyframes viewSlide { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         .mastery-card { 
             background: linear-gradient(165deg, var(--card) 0%, #1e293b 100%); 
-            border-radius: 35px; padding: 30px; border: 1px solid var(--border);
-            box-shadow: var(--shadow); margin-bottom: 30px; position: relative; overflow: hidden;
+            border-radius: 30px; padding: 25px; border: 1px solid var(--border);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5); margin-bottom: 20px;
         }
+        .bar-outer { width: 100%; height: 10px; background: #000; border-radius: 5px; margin: 12px 0; overflow: hidden; }
+        .bar-inner { height: 100%; background: linear-gradient(90deg, var(--accent), var(--blue)); width: 0%; transition: 1.5s ease; }
         
-        .progress-label { display: flex; justify-content: space-between; font-size: 11px; font-weight: 900; letter-spacing: 2px; opacity: 0.8; text-transform: uppercase; }
-        .bar-outer { width: 100%; height: 14px; background: rgba(0,0,0,0.4); border-radius: 7px; margin: 18px 0; overflow: hidden; border: 1px solid var(--border); }
-        .bar-inner { height: 100%; background: linear-gradient(90deg, var(--accent), var(--blue)); width: 0%; transition: 1.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        
-        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .stat-box { background: var(--glass); padding: 15px 5px; border-radius: 22px; text-align: center; border: 1px solid var(--border); backdrop-filter: blur(10px); }
-        .stat-val { display: block; font-size: 24px; font-weight: 950; color: var(--gold); }
-        .stat-tag { font-size: 9px; text-transform: uppercase; font-weight: 900; opacity: 0.5; letter-spacing: 1px; }
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; }
+        .stat-val { display: block; font-size: 20px; font-weight: 900; color: var(--gold); }
+        .stat-lab { font-size: 9px; opacity: 0.5; font-weight: 900; text-transform: uppercase; }
 
-        /* --- TABS --- */
-        .nav-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
-        .tab-btn { background: var(--card); border: 1px solid var(--border); color: white; padding: 18px; border-radius: 20px; font-size: 12px; font-weight: 900; cursor: pointer; transition: 0.3s; }
-        .tab-btn.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3); }
+        .tab-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .tab { 
+            padding: 16px; border-radius: 18px; background: var(--card); border: 1px solid var(--border);
+            color: #fff; font-weight: 800; font-size: 12px; text-align: center;
+        }
+        .tab.active { background: var(--accent); border-color: var(--accent); }
 
-        /* --- NODE PATH --- */
+        .scroll-zone { flex: 1; overflow-y: auto; padding-bottom: 40px; -webkit-overflow-scrolling: touch; }
         .node { 
-            background: var(--card); padding: 24px; border-radius: 28px; margin-bottom: 16px;
-            border: 1px solid var(--border); display: flex; align-items: center; cursor: pointer; transition: 0.3s;
+            background: var(--card); padding: 20px; border-radius: 24px; margin-bottom: 12px;
+            border: 1px solid var(--border); display: flex; align-items: center; transition: 0.2s;
         }
-        .node.locked { opacity: 0.3; filter: grayscale(1); cursor: not-allowed; border-style: dashed; }
-        .node-icon { width: 56px; height: 56px; background: var(--glass); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 26px; margin-right: 22px; border: 1px solid var(--border); }
-        .node-name { font-size: 20px; font-weight: 800; }
+        .node:active { transform: scale(0.96); background: var(--border); }
+        .node.locked { opacity: 0.3; filter: grayscale(1); pointer-events: none; }
 
-        /* --- GAME ENGINE UI --- */
-        .nav-game { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .q-wrap { text-align: center; margin: 20px 0 40px; }
-        .q-hint { font-size: 13px; color: var(--accent); font-weight: 900; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; }
-        .q-main { font-size: 2rem; font-weight: 950; line-height: 1.1; }
-
-        .drop-zone { min-height: 140px; background: rgba(0,0,0,0.2); border: 2px dashed var(--border); border-radius: 32px; padding: 25px; margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; }
-        .word-chip { background: var(--accent); padding: 16px 24px; border-radius: 18px; font-weight: 900; color: white; cursor: pointer; box-shadow: 0 5px 0 #6d28d9; transition: 0.1s; }
-        .word-chip:active { transform: translateY(3px); box-shadow: 0 2px 0 #6d28d9; }
-
-        /* --- FLASHCARD ENGINE --- */
-        .fcard-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; perspective: 1200px; }
-        .fcard { width: 100%; max-width: 340px; height: 450px; position: relative; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
-        .fcard.flipped { transform: rotateY(180deg); }
-        .fcard-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center; border: 1px solid var(--border); box-shadow: var(--shadow); }
-        .fcard-front { background: var(--card); }
-        .fcard-back { background: linear-gradient(135deg, var(--accent), var(--blue)); transform: rotateY(180deg); color: white; }
-
-        /* --- NEURAL CORRECTION OVERLAY --- */
-        #neural-overlay { position: fixed; inset: 0; background: rgba(2, 6, 23, 0.98); z-index: 5000; display: none; flex-direction: column; padding: 40px 25px; justify-content: center; }
-        .correction-card { background: var(--card); border-radius: 35px; padding: 35px; border: 1px solid var(--red); margin-bottom: 25px; }
-        .correction-title { color: var(--red); font-weight: 900; letter-spacing: 2px; font-size: 14px; margin-bottom: 20px; text-transform: uppercase; }
-        .diff-text { font-size: 22px; font-weight: 800; margin-bottom: 20px; }
-
-        .btn-footer { background: var(--accent); color: white; border: none; padding: 25px; border-radius: 25px; font-size: 18px; font-weight: 950; width: 100%; cursor: pointer; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4); text-transform: uppercase; }
+        .kinetic-area { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; perspective: 1000px; }
+        .card-obj { position: absolute; width: 85vw; height: 50vh; max-height: 400px; will-change: transform; }
+        .card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-inner.flipped { transform: rotateY(180deg); }
+        .face { 
+            position: absolute; inset: 0; backface-visibility: hidden; border-radius: 40px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 35px; text-align: center; border: 2px solid var(--border); background: var(--card);
+        }
+        .face-back { background: var(--accent); transform: rotateY(180deg); color: white; }
         
-        ::-webkit-scrollbar { width: 0px; }
+        .speak-btn { 
+            background: rgba(255,255,255,0.1); border: none; border-radius: 50%; 
+            width: 55px; height: 55px; color: white; font-size: 24px; margin-top: 20px;
+        }
+
+        .drop-zone { min-height: 120px; background: rgba(0,0,0,0.2); border: 2px dashed var(--border); border-radius: 25px; padding: 15px; margin: 20px 0; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
+        .word-chip { background: var(--accent); padding: 12px 18px; border-radius: 14px; font-weight: 800; font-size: 14px; border-bottom: 4px solid rgba(0,0,0,0.2); }
+
+        .footer-btn { background: var(--accent); color: white; border: none; padding: 22px; border-radius: 22px; font-weight: 900; font-size: 16px; width: 100%; margin-top: auto; }
+
+        .indicator { position: fixed; top: 50%; transform: translateY(-50%); font-size: 70px; font-weight: 900; opacity: 0; pointer-events: none; z-index: 1000; }
+        .ind-l { left: 30px; color: var(--red); }
+        .ind-r { right: 30px; color: var(--green); }
     </style>
 </head>
 <body>
 
 <div id="scr-dash" class="screen active">
-    <div class="header">
-        <div class="brand">BLINK<span>TITAN</span></div>
-        <div id="disp-streak" style="font-size: 24px; font-weight: 950; color: var(--red);">🔥 0</div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <div style="font-size:24px; font-weight:950; letter-spacing:-1px;">BLINK<span>TITAN</span></div>
+        <div id="streak-val" style="color:var(--red); font-weight:900; font-size:18px;">🔥 0</div>
     </div>
-
+    
     <div class="mastery-card">
-        <div class="progress-label"><span>NEURAL MASTERY</span><span id="disp-pct">0.0%</span></div>
-        <div class="bar-outer"><div id="bar-main" class="bar-inner"></div></div>
+        <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:900; opacity:0.6;"><span>INFINITE ARCHIVE SYNC</span><span id="pct-val">0%</span></div>
+        <div class="bar-outer"><div id="bar-fill" class="bar-inner"></div></div>
         <div class="stat-grid">
-            <div class="stat-box"><span class="stat-val" id="disp-xp">0</span><span class="stat-tag">XP</span></div>
-            <div class="stat-box"><span class="stat-val" id="disp-min">0</span><span class="stat-tag">MINS</span></div>
-            <div class="stat-box"><span class="stat-val" id="disp-rank">RECRUIT</span><span class="stat-tag">RANK</span></div>
+            <div><span class="stat-val" id="xp-val" style="color:var(--gold)">0</span><span class="stat-lab">XP</span></div>
+            <div><span class="stat-val" id="lvl-val">1</span><span class="stat-lab">RANK</span></div>
+            <div><span class="stat-val" id="done-val">0</span><span class="stat-lab">CLEARED</span></div>
         </div>
     </div>
 
-    <div class="nav-tabs">
-        <button class="tab-btn active" id="btn-tab-path" onclick="setDashboardMode('path')">TRAJECTORY</button>
-        <button class="tab-btn" id="btn-tab-study" onclick="setDashboardMode('study')">STUDY DECK</button>
+    <div class="tab-row">
+        <div class="tab active" id="tab-game" onclick="setMode('game')">CHALLENGE</div>
+        <div class="tab" id="tab-study" onclick="setMode('study')">SWIPE ARCHIVE</div>
     </div>
 
-    <div id="path-list" style="padding-bottom: 40px;"></div>
-</div>
-
-<div id="scr-game" class="screen">
-    <div class="nav-game">
-        <button onclick="exitToHome()" style="background:none; border:none; color:white; font-size:32px;">✕</button>
-        <div style="text-align:center;"><div id="game-mod-title" class="stat-tag" style="color:var(--accent)">PHASE 1</div><div id="game-dots" style="display:flex; gap:6px; margin-top:5px;"></div></div>
-        <button onclick="speakInput()" style="background:none; border:none; color:white; font-size:32px;">🔊</button>
-    </div>
-    <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
-        <div class="q-wrap">
-            <div class="q-hint">Target Translation (Spanish)</div>
-            <div id="q-text-en" class="q-main">...</div>
-        </div>
-        <div class="drop-zone" id="game-drop-zone"></div>
-        <div id="game-word-pool" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;"></div>
-    </div>
-    <button class="btn-footer" onclick="evaluateGameStep()" style="margin-top:20px;">VALIDATE NEURAL LINK</button>
+    <div class="scroll-zone" id="mod-list"></div>
 </div>
 
 <div id="scr-study" class="screen">
-    <div class="nav-game">
-        <button onclick="exitToHome()" style="background:none; border:none; color:white; font-size:32px;">✕</button>
-        <div id="study-progress-tag" class="stat-tag">1 / 15</div>
-        <div style="width:32px;"></div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <button onclick="goHome()" style="background:none; border:none; color:white; font-size:30px;">✕</button>
+        <div id="study-title" class="stat-lab" style="color:var(--accent)">MODULE</div>
+        <div id="deck-left" style="font-weight:900; color:var(--accent)">0</div>
     </div>
-    <div class="fcard-container">
-        <div class="fcard" id="study-card-obj" onclick="this.classList.toggle('flipped')">
-            <div class="fcard-face fcard-front">
-                <div class="stat-tag" style="margin-bottom:20px;">English Context</div>
-                <div id="study-text-en" style="font-size:26px; font-weight:900;">...</div>
-                <div style="margin-top:40px; opacity:0.3; font-size:11px; letter-spacing:2px;">TAP TO DECRYPT</div>
-            </div>
-            <div class="fcard-face fcard-back">
-                <div class="stat-tag" style="margin-bottom:20px; color:white;">Spanish Decryption</div>
-                <div id="study-text-es" style="font-size:26px; font-weight:900;">...</div>
-            </div>
-        </div>
-    </div>
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:40px;">
-        <button class="tab-btn" onclick="cycleCard(-1)">PREVIOUS</button>
-        <button class="tab-btn" onclick="cycleCard(1)">NEXT</button>
-    </div>
+    <div class="kinetic-area" id="kinetic-anchor"></div>
+    <div style="text-align:center; opacity:0.3; font-size:10px; font-weight:900; padding:10px;">RECYCLE (LEFT) • MASTER (RIGHT)</div>
 </div>
 
-<div id="neural-overlay">
-    <div class="correction-card">
-        <div class="correction-title">Neural Feedback Loop</div>
-        <div style="margin-bottom:20px;">
-            <div class="stat-tag" style="margin-bottom:5px;">Your Attempt</div>
-            <div id="fb-user-text" class="diff-text" style="color:var(--red);">...</div>
-        </div>
-        <div>
-            <div class="stat-tag" style="margin-bottom:5px;">Correct Syntax</div>
-            <div id="fb-target-text" class="diff-text" style="color:var(--green);">...</div>
-        </div>
+<div id="scr-game" class="screen">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <button onclick="goHome()" style="background:none; border:none; color:white; font-size:30px;">✕</button>
+        <div id="game-dots" style="display:flex; gap:5px;"></div>
+        <button onclick="voiceOut()" style="background:none; border:none; color:white; font-size:24px;">🔊</button>
     </div>
-    <div id="fb-analysis-text" style="font-size:16px; line-height:1.6; opacity:0.8; margin-bottom:40px;"></div>
-    <button class="btn-footer" onclick="closeNeuralFeedback()">ACKNOWLEDGE & RE-SYNC</button>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; text-align:center;">
+        <div class="stat-lab" style="color:var(--accent); margin-bottom:10px;">NEURAL TARGET</div>
+        <h1 id="game-en" style="font-size:28px; margin:0 0 20px;">...</h1>
+        <div class="drop-zone" id="game-drop"></div>
+        <div id="game-pool" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;"></div>
+    </div>
+    <button class="footer-btn" onclick="checkGame()">VALIDATE LINK</button>
 </div>
+
+<div class="indicator ind-l">✕</div>
+<div class="indicator ind-r">✓</div>
 
 <script>
 /**
- * THE CURRICULUM ARCHIVE (9 Modules, 135+ Data Points)
+ * THE INFINITE CURRICULUM (20 MODULES | 240+ PHRASES)
  */
-const CURRICULUM = [
-    { id: 0, lvl: "A1.1", icon: "🆔", topic: "Identity & Being", data: [
-        {es:"Yo soy de Colombia", en:"I am from Colombia"}, {es:"Él es profesor", en:"He is a teacher"}, {es:"Nosotros somos amigos", en:"We are friends"},
-        {es:"¿Eres de Argentina?", en:"Are you from Argentina?"}, {es:"Soy estudiante", en:"I am a student"}, {es:"Ella es arquitecta", en:"She is an architect"},
-        {es:"Ellos son mis padres", en:"They are my parents"}, {es:"Usted es muy inteligente", en:"You are very intelligent"}, {es:"¿Quién es el dueño?", en:"Who is the owner?"},
-        {es:"Somos una gran familia", en:"We are a big family"}, {es:"Él es un buen hombre", en:"He is a good man"}, {es:"Soy nuevo en la ciudad", en:"I am new in the city"},
-        {es:"Ustedes son hermanos", en:"You all are siblings"}, {es:"Es un honor estar aquí", en:"It is an honor to be here"}, {es:"Ella es la doctora principal", en:"She is the lead doctor"}
-    ]},
-    { id: 1, lvl: "A1.2", icon: "🆘", topic: "Survival Basics", data: [
-        {es:"Tengo mucha hambre", en:"I am very hungry"}, {es:"Necesito ayuda", en:"I need help"}, {es:"Quiero un café", en:"I want a coffee"},
-        {es:"No hablo español", en:"I don't speak Spanish"}, {es:"¿Dónde está el hotel?", en:"Where is the hotel?"}, {es:"Llama a la policía", en:"Call the police"},
-        {es:"Perdí mi pasaporte", en:"I lost my passport"}, {es:"¿Dónde hay una farmacia?", en:"Where is there a pharmacy?"}, {es:"Tengo una emergencia", en:"I have an emergency"},
-        {es:"¿Cuánto cuesta la entrada?", en:"How much is the entry fee?"}, {es:"No tengo dinero", en:"I don't have money"}, {es:"¿Puede hablar más lento?", en:"Can you speak slower?"},
-        {es:"Ayúdame por favor", en:"Help me please"}, {es:"¿A qué hora abre?", en:"What time does it open?"}, {es:"Necesito un médico urgente", en:"I need a doctor urgently"}
-    ]},
-    { id: 2, lvl: "A2.1", icon: "🏙️", topic: "Urban Navigation", data: [
-        {es:"Tomo el autobús", en:"I take the bus"}, {es:"Vivo en un apartamento", en:"I live in an apartment"}, {es:"Cruza la calle", en:"Cross the street"},
-        {es:"El metro es rápido", en:"The metro is fast"}, {es:"Gire a la izquierda", en:"Turn left"}, {es:"Siga derecho dos cuadras", en:"Go straight two blocks"},
-        {es:"La parada está cerca", en:"The stop is nearby"}, {es:"Busco el centro comercial", en:"I am looking for the mall"}, {es:"Está al lado del parque", en:"It is next to the park"},
-        {es:"Hay mucho tráfico hoy", en:"There is a lot of traffic today"}, {es:"¿Dónde está la catedral?", en:"Where is the cathedral?"}, {es:"Suba por las escaleras", en:"Go up the stairs"},
-        {es:"La dirección es correcta", en:"The address is correct"}, {es:"El semáforo está rojo", en:"The traffic light is red"}, {es:"Tengo que bajar aquí", en:"I have to get off here"}
-    ]},
-    { id: 3, lvl: "A2.2", icon: "🏢", topic: "Workplace", data: [
-        {es:"Tengo una reunión", en:"I have a meeting"}, {es:"Envío un correo", en:"I send an email"}, {es:"Uso la computadora", en:"I use the computer"},
-        {es:"Mi jefe es amable", en:"My boss is kind"}, {es:"Trabajo en ventas", en:"I work in sales"}, {es:"Firmo el contrato legal", en:"I sign the legal contract"},
-        {es:"El proyecto es urgente", en:"The project is urgent"}, {es:"Mañana hay un feriado", en:"Tomorrow is a holiday"}, {es:"Necesito el informe final", en:"I need the final report"},
-        {es:"¿Cuál es tu salario?", en:"What is your salary?"}, {es:"La empresa es global", en:"The company is global"}, {es:"Tengo una entrevista hoy", en:"I have an interview today"},
-        {es:"Ella es la gerente", en:"She is the manager"}, {es:"El equipo es eficiente", en:"The team is efficient"}, {es:"Llego tarde a la oficina", en:"I am late to the office"}
-    ]},
-    { id: 4, lvl: "B1.1", icon: "🕰️", topic: "Past Memories", data: [
-        {es:"Ayer fui al cine", en:"Yesterday I went to the cinema"}, {es:"Hablé con mi jefe", en:"I spoke with my boss"}, {es:"¿Qué hiciste hoy?", en:"What did you do today?"},
-        {es:"Viajamos a España", en:"We traveled to Spain"}, {es:"Comimos pizza rica", en:"We ate delicious pizza"}, {es:"Él me dijo la verdad", en:"He told me the truth"},
-        {es:"Perdí mis llaves ayer", en:"I lost my keys yesterday"}, {es:"Vimos una gran película", en:"We saw a great movie"}, {es:"Estudié toda la noche", en:"I studied all night"},
-        {es:"Ellos compraron la casa", en:"They bought the house"}, {es:"Fue un día increíble", en:"It was an incredible day"}, {es:"¿Dónde estuviste el lunes?", en:"Where were you on Monday?"},
-        {es:"Hice mi tarea temprano", en:"I did my homework early"}, {es:"Conocí a tu hermano", en:"I met your brother"}, {es:"Llegamos tarde al tren", en:"We arrived late to the train"}
-    ]},
-    { id: 5, lvl: "B1.2", icon: "🌍", topic: "Environment", data: [
-        {es:"Debemos reciclar más", en:"We must recycle more"}, {es:"El clima está cambiando", en:"The climate is changing"}, {es:"Protege los bosques", en:"Protect the forests"},
-        {es:"Ahorra energía eléctrica", en:"Save electrical energy"}, {es:"No tires basura", en:"Don't throw trash"}, {es:"El aire está muy sucio", en:"The air is very dirty"},
-        {es:"Cuidar el planeta tierra", en:"To care for planet earth"}, {es:"Usa paneles solares", en:"Use solar panels"}, {es:"La selva es inmensa", en:"The jungle is immense"},
-        {es:"Animales en extinción", en:"Animals in extinction"}, {es:"Agua potable pura", en:"Pure drinking water"}, {es:"Contaminación del mar", en:"Pollution of the sea"},
-        {es:"Energía renovable limpia", en:"Clean renewable energy"}, {es:"Plantar nuevos árboles", en:"To plant new trees"}, {es:"Calentamiento global real", en:"Real global warming"}
-    ]},
-    { id: 6, lvl: "B1.3", icon: "💻", topic: "Tech & Social", data: [
-        {es:"Descarga la aplicación", en:"Download the application"}, {es:"Mi señal es débil", en:"My signal is weak"}, {es:"¿Cuál es la clave?", en:"What is the password?"},
-        {es:"Envíame un mensaje", en:"Send me a message"}, {es:"Carga la batería", en:"Charge the battery"}, {es:"Navegar por la red", en:"To surf the net"},
-        {es:"El sitio web falló", en:"The website crashed"}, {es:"Actualiza el software", en:"Update the software"}, {es:"Tengo mucha memoria", en:"I have a lot of memory"},
-        {es:"Redes sociales activas", en:"Active social networks"}, {es:"El archivo es pesado", en:"The file is heavy"}, {es:"Conectar al wifi gratis", en:"Connect to free wifi"},
-        {es:"Pantalla táctil rota", en:"Broken touch screen"}, {es:"Borrar el historial", en:"Clear the history"}, {es:"Error de conexión total", en:"Total connection error"}
-    ]},
-    { id: 7, lvl: "B2.1", icon: "⚖️", topic: "Legal System", data: [
-        {es:"Firme el contrato", en:"Sign the contract"}, {es:"Es mi derecho", en:"It is my right"}, {es:"Llamaré a mi abogado", en:"I will call my lawyer"},
-        {es:"El juez decidió", en:"The judge decided"}, {es:"Bajo la ley actual", en:"Under the law"}, {es:"Propiedad privada real", en:"Real private property"},
-        {es:"Un delito muy grave", en:"A serious crime"}, {es:"Declarar la verdad pura", en:"To declare the truth"}, {es:"Pagar la multa hoy", en:"To pay the fine today"},
-        {es:"Cumplir el acuerdo", en:"To fulfill the agreement"}, {es:"Tengo pruebas sólidas", en:"I have solid evidence"}, {es:"El veredicto final", en:"The final verdict"},
-        {es:"Derechos humanos básicos", en:"Basic human rights"}, {es:"Demandar a la empresa", en:"To sue the company"}, {es:"Cárcel por robo", en:"Jail for robbery"}
-    ]},
-    { id: 8, lvl: "B2.2", icon: "📈", topic: "Global Economy", data: [
-        {es:"La inflación subió", en:"Inflation rose"}, {es:"Invertir en bolsa", en:"Invest in the stock market"}, {es:"Crecimiento económico", en:"Economic growth"},
-        {es:"Tasa de desempleo", en:"Unemployment rate"}, {es:"Deuda externa alta", en:"High external debt"}, {es:"Exportar muchos productos", en:"To export many products"},
-        {es:"Análisis financiero real", en:"Real financial analysis"}, {es:"Ganancias netas bajas", en:"Low net profits"}, {es:"Crisis de divisas fuerte", en:"Strong currency crisis"},
-        {es:"Presupuesto anual listo", en:"Annual budget ready"}, {es:"Impuestos muy altos", en:"Very high taxes"}, {es:"El mercado global cae", en:"The global market falls"},
-        {es:"Riesgo de inversión", en:"Investment risk"}, {es:"Producto interno bruto", en:"Gross domestic product"}, {es:"Socio comercial clave", en:"Key trading partner"}
-    ]}
+const INF_ARCHIVE = [
+    { id: 0, lvl: "A1.1", icon: "👋", topic: "Identity", data: [{es:"Yo soy de Colombia", en:"I am from Colombia"},{es:"Él es mi amigo", en:"He is my friend"},{es:"Somos estudiantes", en:"We are students"},{es:"Ella es profesora", en:"She is a teacher"},{es:"Usted es muy amable", en:"You are very kind"},{es:"Ellos son doctores", en:"They are doctors"}]},
+    { id: 1, lvl: "A1.2", icon: "🍎", topic: "Basics", data: [{es:"Tengo mucha hambre", en:"I am very hungry"},{es:"Quiero agua fría", en:"I want cold water"},{es:"¿Dónde está el baño?", en:"Where is the bathroom?"},{es:"Necesito ayuda ahora", en:"I need help now"},{es:"Tengo sueño", en:"I am sleepy"},{es:"No entiendo nada", en:"I don't understand anything"}]},
+    { id: 2, lvl: "A2.1", icon: "🏠", topic: "Home", data: [{es:"Vivo en una casa", en:"I live in a house"},{es:"La cocina es pequeña", en:"The kitchen is small"},{es:"Mi cama es cómoda", en:"My bed is comfortable"},{es:"Limpio mi cuarto", en:"I clean my room"},{es:"Hay flores afuera", en:"There are flowers outside"},{es:"Abro la ventana", en:"I open the window"}]},
+    { id: 3, lvl: "A2.2", icon: "🚌", topic: "Travel", data: [{es:"Tomo el autobús", en:"I take the bus"},{es:"El tren llega tarde", en:"The train is late"},{es:"Busco mi pasaporte", en:"I am looking for my passport"},{es:"¿Cuánto cuesta el taxi?", en:"How much is the taxi?"},{es:"El avión despega", en:"The plane takes off"},{es:"Viajo con mi familia", en:"I travel with my family"}]},
+    { id: 4, lvl: "B1.1", icon: "💼", topic: "Office", data: [{es:"Tengo una reunión", en:"I have a meeting"},{es:"Envío un correo", en:"I send an email"},{es:"El jefe está ocupado", en:"The boss is busy"},{es:"Uso la computadora", en:"I use the computer"},{es:"Firmo el documento", en:"I sign the document"},{es:"Llego a tiempo", en:"I arrive on time"}]},
+    { id: 5, lvl: "B1.2", icon: "🎭", topic: "Feelings", data: [{es:"Me siento feliz hoy", en:"I feel happy today"},{es:"Estoy muy cansado", en:"I am very tired"},{es:"Ella está enojada", en:"She is angry"},{es:"Es una sorpresa", en:"It is a surprise"},{es:"No tengas miedo", en:"Don't be afraid"},{es:"Estamos emocionados", en:"We are excited"}]},
+    { id: 6, lvl: "B1.3", icon: "🍕", topic: "Dining", data: [{es:"La cuenta, por favor", en:"The check, please"},{es:"Soy vegetariano", en:"I am a vegetarian"},{es:"La comida está rica", en:"The food is delicious"},{es:"Quiero una mesa", en:"I want a table"},{es:"¿Qué recomienda usted?", en:"What do you recommend?"},{es:"Sin cebolla, por favor", en:"No onions, please"}]},
+    { id: 7, lvl: "B2.1", icon: "⚖️", topic: "Justice", data: [{es:"Es mi derecho legal", en:"It is my legal right"},{es:"El juez decidió", en:"The judge decided"},{es:"Bajo la ley actual", en:"Under the current law"},{es:"Firmar el contrato", en:"To sign the contract"},{es:"Pagar la multa", en:"To pay the fine"},{es:"Declarar la verdad", en:"To declare the truth"}]},
+    { id: 8, lvl: "B2.2", icon: "🌍", topic: "Planet", data: [{es:"Cuidar el ambiente", en:"To care for the environment"},{es:"Reciclar el plástico", en:"To recycle the plastic"},{es:"El clima cambia", en:"The climate changes"},{es:"Energía solar limpia", en:"Clean solar energy"},{es:"Salvar los océanos", en:"To save the oceans"},{es:"Plantar un árbol", en:"To plant a tree"}]},
+    { id: 9, lvl: "B2.3", icon: "💻", topic: "Tech", data: [{es:"La señal es débil", en:"The signal is weak"},{es:"Borrar el historial", en:"To clear history"},{es:"Descarga la app", en:"Download the app"},{es:"Clave de seguridad", en:"Security password"},{es:"Pantalla táctil rota", en:"Broken touch screen"},{es:"Error de sistema", en:"System error"}]},
+    { id: 10, lvl: "C1.1", icon: "🧠", topic: "Logic", data: [{es:"Es un dilema ético", en:"It is an ethical dilemma"},{es:"Analizar los datos", en:"To analyze the data"},{es:"Una conclusión lógica", en:"A logical conclusion"},{es:"Deducir el resultado", en:"To deduce the result"},{es:"La premisa es falsa", en:"The premise is false"},{es:"Pensamiento crítico", en:"Critical thinking"}]},
+    { id: 11, lvl: "C1.2", icon: "📈", topic: "Finance", data: [{es:"Inversión de riesgo", en:"Risk investment"},{es:"El mercado fluctúa", en:"The market fluctuates"},{es:"Ganancia neta anual", en:"Annual net profit"},{es:"Tasa de interés alta", en:"High interest rate"},{es:"Acciones en bolsa", en:"Stock market shares"},{es:"Deuda externa", en:"External debt"}]},
+    { id: 12, lvl: "C1.3", icon: "🏛️", topic: "Politics", data: [{es:"Votar en elecciones", en:"To vote in elections"},{es:"Campaña electoral", en:"Electoral campaign"},{es:"El senado aprobó", en:"The senate approved"},{es:"Derechos humanos", en:"Human rights"},{es:"Corrupción estatal", en:"State corruption"},{es:"Libertad de prensa", en:"Freedom of the press"}]},
+    { id: 13, lvl: "C1.4", icon: "🔬", topic: "Science", data: [{es:"Teoría de cuerdas", en:"String theory"},{es:"Células madre", en:"Stem cells"},{es:"Evolución genética", en:"Genetic evolution"},{es:"Reacción química", en:"Chemical reaction"},{es:"Espacio exterior", en:"Outer space"},{es:"Gravedad cero", en:"Zero gravity"}]},
+    { id: 14, lvl: "C2.1", icon: "📜", topic: "History", data: [{es:"Civilización antigua", en:"Ancient civilization"},{es:"El imperio cayó", en:"The empire fell"},{es:"Guerra de independencia", en:"War of independence"},{es:"Tratado de paz", en:"Peace treaty"},{es:"Edad media", en:"Middle ages"},{es:"Revolución industrial", en:"Industrial revolution"}]},
+    { id: 15, lvl: "C2.2", icon: "🎨", topic: "Art Theory", data: [{es:"Perspectiva visual", en:"Visual perspective"},{es:"Obra maestra", en:"Masterpiece"},{es:"Pinceladas suaves", en:"Soft brushstrokes"},{es:"Arte contemporáneo", en:"Contemporary art"},{es:"Escultura de mármol", en:"Marble sculpture"},{es:"Galería de arte", en:"Art gallery"}]},
+    { id: 16, lvl: "C2.3", icon: "🎵", topic: "Music", data: [{es:"Ritmo sincopado", en:"Syncopated rhythm"},{es:"Melodía armoniosa", en:"Harmonious melody"},{es:"Compositor clásico", en:"Classical composer"},{es:"Concierto en vivo", en:"Live concert"},{es:"Instrumento de cuerda", en:"String instrument"},{es:"Voz soprano", en:"Soprano voice"}]},
+    { id: 17, lvl: "C2.4", icon: "🏥", topic: "Medical", data: [{es:"Cirugía compleja", en:"Complex surgery"},{es:"Diagnóstico precoz", en:"Early diagnosis"},{es:"Tratamiento médico", en:"Medical treatment"},{es:"Presión arterial", en:"Blood pressure"},{es:"Sistema inmune", en:"Immune system"},{es:"Receta médica", en:"Medical prescription"}]},
+    { id: 18, lvl: "C2.5", icon: "🏹", topic: "Literature", data: [{es:"Metáfora poética", en:"Poetic metaphor"},{es:"Narrativa épica", en:"Epic narrative"},{es:"Género literario", en:"Literary genre"},{es:"Protagonista trágico", en:"Tragic protagonist"},{es:"Capítulo final", en:"Final chapter"},{es:"Autor anónimo", en:"Anonymous author"}]},
+    { id: 19, lvl: "D1.1", icon: "🌌", topic: "Philosophy", data: [{es:"Existencia humana", en:"Human existence"},{es:"Moral absoluta", en:"Absolute morality"},{es:"Libre albedrío", en:"Free will"},{es:"Conciencia pura", en:"Pure consciousness"},{es:"Eterno retorno", en:"Eternal return"},{es:"Verdad objetiva", en:"Objective truth"}]}
 ];
 
-/**
- * PERSISTENT STATE ENGINE
- */
-let state = JSON.parse(localStorage.getItem('titan_singularity_v22')) || {
-    xp: 0, mins: 0, unlocked: 0, completed: [], streak: 0, lastDate: null
-};
+/** STATE ENGINE */
+let db = JSON.parse(localStorage.getItem('blink_inf_v26')) || { xp:0, unlocked:0, completed:[], streak:0, lastDate:null };
+let active = { mode:'game', mod:null, deck:[], cur:null, startX:0, curX:0, drag:false };
 
-let session = {
-    dashMode: 'path', mod: null, deck: [], cur: null, idx: 0, errors: 0, startTime: null
-};
-
-// BOOT
 function boot() {
-    refreshUI();
-    renderDashboardList();
-    syncStreak();
+    updateUI();
+    renderModules();
 }
 
-function syncStreak() {
-    const today = new Date().toDateString();
-    if(state.lastDate !== today) {
-        state.streak++;
-        state.lastDate = today;
-        saveState();
-    }
+function setMode(m) {
+    active.mode = m;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-'+m).classList.add('active');
 }
 
-function setDashboardMode(m) {
-    session.dashMode = m;
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(`btn-tab-${m}`).classList.add('active');
-    renderDashboardList();
-}
-
-/**
- * DASHBOARD LOGIC
- */
-function renderDashboardList() {
-    const container = document.getElementById('path-list');
-    container.innerHTML = '';
-    
-    CURRICULUM.forEach((mod, i) => {
-        const isUnlocked = i <= state.unlocked;
-        const isDone = state.completed.includes(mod.id);
-        const el = document.createElement('div');
-        el.className = `node ${isUnlocked ? '' : 'locked'}`;
-        el.onclick = () => {
-            if(!isUnlocked) return;
-            session.dashMode === 'path' ? launchGame(mod) : launchStudy(mod);
-        };
-        el.innerHTML = `
-            <div class="node-icon">${isUnlocked ? mod.icon : '🔒'}</div>
+function renderModules() {
+    const box = document.getElementById('mod-list');
+    box.innerHTML = '';
+    INF_ARCHIVE.forEach((m, i) => {
+        const locked = i > db.unlocked;
+        const div = document.createElement('div');
+        div.className = `node ${locked ? 'locked' : ''}`;
+        div.onclick = () => { if(!locked) active.mode === 'game' ? launchGame(m) : launchStudy(m); };
+        div.innerHTML = `
+            <div style="font-size:28px; margin-right:15px; width:50px; text-align:center;">${locked?'🔒':m.icon}</div>
             <div style="flex:1">
-                <div class="stat-tag" style="color:var(--accent);">${mod.lvl}</div>
-                <div class="node-name">${mod.topic}</div>
+                <small style="font-weight:900; color:var(--accent);">${m.lvl}</small>
+                <div style="font-weight:800; font-size:16px;">${m.topic}</div>
             </div>
-            ${isDone ? '<div style="color:var(--green); font-size:24px;">✓</div>' : ''}
+            ${db.completed.includes(m.id)?'<span style="color:var(--green); font-size:18px;">✓</span>':''}
         `;
-        container.appendChild(el);
+        box.appendChild(div);
     });
 }
 
-/**
- * GAME ENGINE
- */
-function launchGame(mod) {
-    session.mod = mod;
-    session.deck = [...mod.data].sort(() => 0.5 - Math.random());
-    session.idx = 0;
-    session.errors = 0;
-    session.startTime = Date.now();
-    document.getElementById('game-mod-title').innerText = mod.topic;
-    showScreen('scr-game');
-    initDots();
-    nextGameStep();
-}
-
-function nextGameStep() {
-    if(session.deck.length === 0) return finishGame();
-    session.cur = session.deck.pop();
-    session.idx++;
-    updateDotsUI();
-    
-    document.getElementById('q-text-en').innerText = session.cur.en;
-    const pool = document.getElementById('game-word-pool');
-    const drop = document.getElementById('game-drop-zone');
-    pool.innerHTML = ''; drop.innerHTML = '';
-    
-    session.cur.es.split(' ').sort(() => 0.5 - Math.random()).forEach(word => {
-        const chip = document.createElement('div');
-        chip.className = 'word-chip';
-        chip.innerText = word;
-        chip.onclick = () => (chip.parentElement.id === 'game-word-pool' ? drop : pool).appendChild(chip);
-        pool.appendChild(chip);
-    });
-}
-
-function evaluateGameStep() {
-    const guess = Array.from(document.getElementById('game-drop-zone').children).map(c => c.innerText).join(' ');
-    if(guess === session.cur.es) {
-        state.xp += 25;
-        nextGameStep();
-    } else {
-        openNeuralFeedback(guess, session.cur.es);
-    }
-}
-
-function openNeuralFeedback(guess, target) {
-    document.getElementById('fb-user-text').innerText = guess || "[No Input Detected]";
-    document.getElementById('fb-target-text').innerText = target;
-    
-    let analysis = "Linguistic mismatch identified. ";
-    const userWords = guess.split(' ');
-    const targetWords = target.split(' ');
-
-    if(userWords.length !== targetWords.length) {
-        analysis += `The target requires <b>${targetWords.length}</b> tokens, you provided <b>${userWords.length}</b>. Check for missing connectors or articles.`;
-    } else {
-        analysis += `You have the correct lexicon, but the <b>syntax</b> (order) is invalid for Spanish. Remember: Adjectives usually follow the noun in this context.`;
-    }
-
-    document.getElementById('fb-analysis-text').innerHTML = analysis;
-    document.getElementById('neural-overlay').style.display = 'flex';
-}
-
-function closeNeuralFeedback() {
-    document.getElementById('neural-overlay').style.display = 'none';
-    session.errors++;
-    nextGameStep();
-}
-
-/**
- * STUDY ENGINE (FLASHCARDS)
- */
-function launchStudy(mod) {
-    session.mod = mod;
-    session.idx = 0;
+/** KINETIC ENGINE */
+function launchStudy(m) {
+    active.mod = m;
+    active.deck = [...m.data].sort(() => 0.5 - Math.random());
+    document.getElementById('study-title').innerText = m.topic;
     showScreen('scr-study');
-    renderStudyCard();
+    renderCard();
 }
 
-function renderStudyCard() {
-    const pair = session.mod.data[session.idx];
-    document.getElementById('study-card-obj').classList.remove('flipped');
-    document.getElementById('study-text-en').innerText = pair.en;
-    document.getElementById('study-text-es').innerText = pair.es;
-    document.getElementById('study-progress-tag').innerText = `${session.idx + 1} / ${session.mod.data.length}`;
+function renderCard() {
+    const anchor = document.getElementById('kinetic-anchor');
+    anchor.innerHTML = '';
+    document.getElementById('deck-left').innerText = active.deck.length;
+    if(active.deck.length === 0) return goHome();
+
+    const data = active.deck[0];
+    const card = document.createElement('div');
+    card.className = 'card-obj';
+    card.innerHTML = `
+        <div class="card-inner" id="card-inner-obj">
+            <div class="face">
+                <div class="stat-lab">CONTEXT (EN)</div>
+                <h2 style="font-size:24px;">${data.en}</h2>
+                <div style="margin-top:30px; opacity:0.3; font-size:10px; font-weight:900;">TAP TO REVEAL</div>
+            </div>
+            <div class="face face-back">
+                <div class="stat-lab" style="color:white;">SPEECH (ES)</div>
+                <h2 style="font-size:24px;">${data.es}</h2>
+                <button class="speak-btn" onclick="event.stopPropagation(); voiceOutText('${data.es}')">🔊</button>
+            </div>
+        </div>
+    `;
+
+    card.addEventListener('touchstart', (e) => { active.startX = e.touches[0].clientX; active.drag = true; card.style.transition = 'none'; });
+    card.addEventListener('touchmove', (e) => {
+        if(!active.drag) return;
+        active.curX = e.touches[0].clientX - active.startX;
+        card.style.transform = `translate3d(${active.curX}px, 0, 0) rotate(${active.curX/12}deg)`;
+        document.querySelector('.ind-l').style.opacity = active.curX < -60 ? 1 : 0;
+        document.querySelector('.ind-r').style.opacity = active.curX > 60 ? 1 : 0;
+    });
+
+    card.addEventListener('touchend', () => {
+        active.drag = false;
+        if(Math.abs(active.curX) > 130) {
+            handleSwipe(active.curX > 0 ? 1 : -1, card);
+        } else {
+            if(Math.abs(active.curX) < 5) document.getElementById('card-inner-obj').classList.toggle('flipped');
+            card.style.transition = '0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            card.style.transform = `translate3d(0,0,0) rotate(0deg)`;
+        }
+        document.querySelector('.ind-l').style.opacity = 0; document.querySelector('.ind-r').style.opacity = 0;
+    });
+    anchor.appendChild(card);
 }
 
-function cycleCard(dir) {
-    session.idx = (session.idx + dir + session.mod.data.length) % session.mod.data.length;
-    renderStudyCard();
+function handleSwipe(dir, el) {
+    el.style.transition = '0.3s ease-in';
+    el.style.transform = `translate3d(${dir * 800}px, 0, 0) rotate(${dir * 45}deg)`;
+    setTimeout(() => {
+        const item = active.deck.shift();
+        if(dir === -1) active.deck.splice(3, 0, item); // Spaced repetition injection
+        else db.xp += 10;
+        renderCard(); updateUI();
+    }, 300);
 }
 
-/**
- * SYSTEM UTILS
- */
+/** GAME ENGINE */
+function launchGame(m) {
+    active.mod = m;
+    active.deck = [...m.data].sort(() => 0.5 - Math.random());
+    showScreen('scr-game');
+    nextChallenge();
+}
+
+function nextChallenge() {
+    if(active.deck.length === 0) return finishGame();
+    active.cur = active.deck.pop();
+    document.getElementById('game-en').innerText = active.cur.en;
+    const pool = document.getElementById('game-pool');
+    const drop = document.getElementById('game-drop');
+    pool.innerHTML = ''; drop.innerHTML = '';
+    active.cur.es.split(' ').sort(()=>0.5-Math.random()).forEach(w => {
+        const c = document.createElement('div'); c.className = 'word-chip'; c.innerText = w;
+        c.onclick = () => (c.parentElement.id === 'game-pool' ? drop : pool).appendChild(c);
+        pool.appendChild(c);
+    });
+}
+
+function checkGame() {
+    const guess = Array.from(document.getElementById('game-drop').children).map(c => c.innerText).join(' ');
+    if(guess === active.cur.es) { db.xp += 25; updateUI(); nextChallenge(); }
+    else alert("ERROR: " + active.cur.es);
+}
+
 function finishGame() {
-    if(!state.completed.includes(session.mod.id)) {
-        state.completed.push(session.mod.id);
-        if(session.mod.id === state.unlocked) state.unlocked++;
+    if(!db.completed.includes(active.mod.id)) {
+        db.completed.push(active.mod.id);
+        if(active.mod.id === db.unlocked) db.unlocked++;
     }
-    const elapsed = Math.floor((Date.now() - session.startTime) / 60000);
-    state.mins += Math.max(elapsed, 2);
-    state.xp += 100;
-    saveState();
-    exitToHome();
+    db.xp += 100;
+    saveState(); goHome();
 }
 
-function refreshUI() {
-    document.getElementById('disp-xp').innerText = state.xp.toLocaleString();
-    document.getElementById('disp-min').innerText = state.mins;
-    document.getElementById('disp-streak').innerText = `🔥 ${state.streak}`;
-    const p = (state.unlocked / CURRICULUM.length) * 100;
-    document.getElementById('disp-pct').innerText = p.toFixed(1) + "%";
-    document.getElementById('bar-main').style.width = p + "%";
-    
-    let rank = "RECRUIT";
-    if(state.xp > 2000) rank = "ELITE";
-    if(state.xp > 8000) rank = "TITAN";
-    document.getElementById('disp-rank').innerText = rank;
+/** GLOBAL HELPERS */
+function voiceOutText(txt) { const u = new SpeechSynthesisUtterance(txt); u.lang = 'es-MX'; window.speechSynthesis.speak(u); }
+function voiceOut() { voiceOutText(active.cur.es); }
+function updateUI() {
+    document.getElementById('xp-val').innerText = db.xp.toLocaleString();
+    document.getElementById('lvl-val').innerText = Math.floor(db.xp / 1000) + 1;
+    document.getElementById('done-val').innerText = db.completed.length;
+    const p = (db.unlocked / INF_ARCHIVE.length) * 100;
+    document.getElementById('bar-fill').style.width = p + "%";
+    document.getElementById('pct-val').innerText = Math.round(p) + "%";
 }
+function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function goHome() { showScreen('scr-dash'); boot(); saveState(); }
+function saveState() { localStorage.setItem('blink_inf_v26', JSON.stringify(db)); }
 
-function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-}
-
-function exitToHome() { showScreen('scr-dash'); boot(); }
-function saveState() { localStorage.setItem('titan_singularity_v22', JSON.stringify(state)); }
-
-function initDots() {
-    const m = document.getElementById('game-dots'); m.innerHTML = '';
-    for(let i=0; i<session.mod.data.length; i++) {
-        const d = document.createElement('div');
-        d.style.cssText = 'width:5px; height:5px; border-radius:50%; background:var(--border);';
-        m.appendChild(d);
-    }
-}
-
-function updateDotsUI() {
-    const dots = document.getElementById('game-dots').children;
-    if(dots[session.idx-1]) dots[session.idx-1].style.background = 'var(--accent)';
-}
-
-function speakInput() {
-    const u = new SpeechSynthesisUtterance(session.cur.es);
-    u.lang = 'es-MX'; u.rate = 0.85;
-    window.speechSynthesis.speak(u);
-}
-
-// LAUNCH
 boot();
 </script>
 </body>
