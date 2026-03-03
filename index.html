@@ -3,19 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BLINK TITAN | THE 800+ LINE MONOLITH</title>
+    <title>BLINK TITAN | THE SINGULARITY v22.0</title>
     <style>
         :root {
-            --bg: #020617; 
-            --card: #0f172a; 
-            --accent: #8b5cf6; 
-            --gold: #fbbf24;
-            --text: #f8fafc; 
-            --green: #10b981; 
-            --red: #ef4444; 
-            --border: #1e293b;
-            --blue: #3b82f6; 
-            --glass: rgba(255, 255, 255, 0.03);
+            --bg: #020617; --card: #0f172a; --accent: #8b5cf6; --gold: #fbbf24;
+            --text: #f8fafc; --green: #10b981; --red: #ef4444; --border: #1e293b;
+            --blue: #3b82f6; --glass: rgba(255, 255, 255, 0.05);
             --shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
@@ -27,7 +20,7 @@
             height: 100vh; overflow: hidden; display: flex; flex-direction: column;
         }
 
-        /* --- SCREEN MANAGEMENT --- */
+        /* --- NAVIGATION & SCREENS --- */
         .screen { display: none; flex-direction: column; height: 100%; width: 100%; padding: 25px; overflow-y: auto; }
         .screen.active { display: flex; animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         
@@ -49,16 +42,16 @@
         
         .progress-label { display: flex; justify-content: space-between; font-size: 11px; font-weight: 900; letter-spacing: 2px; opacity: 0.8; text-transform: uppercase; }
         .bar-outer { width: 100%; height: 14px; background: rgba(0,0,0,0.4); border-radius: 7px; margin: 18px 0; overflow: hidden; border: 1px solid var(--border); }
-        .bar-inner { height: 100%; background: linear-gradient(90deg, var(--accent), var(--blue)); width: 0%; transition: 1.8s ease; }
+        .bar-inner { height: 100%; background: linear-gradient(90deg, var(--accent), var(--blue)); width: 0%; transition: 1.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
         
         .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .stat-box { background: var(--glass); padding: 15px 5px; border-radius: 22px; text-align: center; border: 1px solid var(--border); }
+        .stat-box { background: var(--glass); padding: 15px 5px; border-radius: 22px; text-align: center; border: 1px solid var(--border); backdrop-filter: blur(10px); }
         .stat-val { display: block; font-size: 24px; font-weight: 950; color: var(--gold); }
         .stat-tag { font-size: 9px; text-transform: uppercase; font-weight: 900; opacity: 0.5; letter-spacing: 1px; }
 
-        /* --- NAVIGATION TABS --- */
-        .nav-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .tab-btn { background: var(--card); border: 1px solid var(--border); color: white; padding: 15px; border-radius: 20px; font-size: 12px; font-weight: 900; cursor: pointer; text-align: center; transition: 0.3s; }
+        /* --- TABS --- */
+        .nav-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+        .tab-btn { background: var(--card); border: 1px solid var(--border); color: white; padding: 18px; border-radius: 20px; font-size: 12px; font-weight: 900; cursor: pointer; transition: 0.3s; }
         .tab-btn.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3); }
 
         /* --- NODE PATH --- */
@@ -72,12 +65,13 @@
 
         /* --- GAME ENGINE UI --- */
         .nav-game { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .q-wrap { text-align: center; margin: 20px 0 50px; }
+        .q-wrap { text-align: center; margin: 20px 0 40px; }
         .q-hint { font-size: 13px; color: var(--accent); font-weight: 900; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; }
-        .q-main { font-size: 2.5rem; font-weight: 950; line-height: 1.1; }
+        .q-main { font-size: 2rem; font-weight: 950; line-height: 1.1; }
 
-        .drop-zone { min-height: 130px; background: rgba(0,0,0,0.2); border: 2px dashed var(--border); border-radius: 32px; padding: 25px; margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; }
-        .word-chip { background: var(--accent); padding: 16px 24px; border-radius: 18px; font-weight: 900; color: white; cursor: pointer; box-shadow: 0 5px 0 #6d28d9; }
+        .drop-zone { min-height: 140px; background: rgba(0,0,0,0.2); border: 2px dashed var(--border); border-radius: 32px; padding: 25px; margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; }
+        .word-chip { background: var(--accent); padding: 16px 24px; border-radius: 18px; font-weight: 900; color: white; cursor: pointer; box-shadow: 0 5px 0 #6d28d9; transition: 0.1s; }
+        .word-chip:active { transform: translateY(3px); box-shadow: 0 2px 0 #6d28d9; }
 
         /* --- FLASHCARD ENGINE --- */
         .fcard-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; perspective: 1200px; }
@@ -88,20 +82,13 @@
         .fcard-back { background: linear-gradient(135deg, var(--accent), var(--blue)); transform: rotateY(180deg); color: white; }
 
         /* --- NEURAL CORRECTION OVERLAY --- */
-        #neural-overlay { position: fixed; inset: 0; background: rgba(2, 6, 23, 0.98); z-index: 5000; display: none; flex-direction: column; padding: 40px 25px; }
+        #neural-overlay { position: fixed; inset: 0; background: rgba(2, 6, 23, 0.98); z-index: 5000; display: none; flex-direction: column; padding: 40px 25px; justify-content: center; }
         .correction-card { background: var(--card); border-radius: 35px; padding: 35px; border: 1px solid var(--red); margin-bottom: 25px; }
         .correction-title { color: var(--red); font-weight: 900; letter-spacing: 2px; font-size: 14px; margin-bottom: 20px; text-transform: uppercase; }
-        .diff-box { margin-bottom: 20px; }
-        .diff-label { font-size: 10px; font-weight: 900; opacity: 0.5; margin-bottom: 5px; text-transform: uppercase; }
-        .diff-text { font-size: 20px; font-weight: 800; }
-
-        /* --- RECAP ENGINE --- */
-        #recap-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 4000; display: none; flex-direction: column; padding: 40px 25px; overflow-y: auto; }
-        .recap-item { background: var(--glass); padding: 20px; border-radius: 20px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .diff-text { font-size: 22px; font-weight: 800; margin-bottom: 20px; }
 
         .btn-footer { background: var(--accent); color: white; border: none; padding: 25px; border-radius: 25px; font-size: 18px; font-weight: 950; width: 100%; cursor: pointer; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4); text-transform: uppercase; }
         
-        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
         ::-webkit-scrollbar { width: 0px; }
     </style>
 </head>
@@ -110,11 +97,11 @@
 <div id="scr-dash" class="screen active">
     <div class="header">
         <div class="brand">BLINK<span>TITAN</span></div>
-        <div id="disp-streak" style="font-size: 24px; font-weight: 950; color: #ff4d4d;">🔥 0</div>
+        <div id="disp-streak" style="font-size: 24px; font-weight: 950; color: var(--red);">🔥 0</div>
     </div>
 
     <div class="mastery-card">
-        <div class="progress-label"><span>Neural Progression</span><span id="disp-pct">0.0%</span></div>
+        <div class="progress-label"><span>NEURAL MASTERY</span><span id="disp-pct">0.0%</span></div>
         <div class="bar-outer"><div id="bar-main" class="bar-inner"></div></div>
         <div class="stat-grid">
             <div class="stat-box"><span class="stat-val" id="disp-xp">0</span><span class="stat-tag">XP</span></div>
@@ -124,73 +111,74 @@
     </div>
 
     <div class="nav-tabs">
-        <button class="tab-btn active" id="tab-path" onclick="switchMode('path')">TRAJECTORY</button>
-        <button class="tab-btn" id="tab-study" onclick="switchMode('study')">STUDY DECK</button>
+        <button class="tab-btn active" id="btn-tab-path" onclick="setDashboardMode('path')">TRAJECTORY</button>
+        <button class="tab-btn" id="btn-tab-study" onclick="setDashboardMode('study')">STUDY DECK</button>
     </div>
 
-    <div id="path-list"></div>
+    <div id="path-list" style="padding-bottom: 40px;"></div>
 </div>
 
 <div id="scr-game" class="screen">
     <div class="nav-game">
-        <button onclick="quitGame()" style="background:none; border:none; color:white; font-size:32px;">✕</button>
-        <div style="text-align:center;"><div id="game-title" class="stat-tag" style="color:var(--accent)">IDENTITY</div><div id="game-dots" style="display:flex; gap:6px; margin-top:5px;"></div></div>
-        <button onclick="speakCurrent()" style="background:none; border:none; color:white; font-size:32px;">🔊</button>
+        <button onclick="exitToHome()" style="background:none; border:none; color:white; font-size:32px;">✕</button>
+        <div style="text-align:center;"><div id="game-mod-title" class="stat-tag" style="color:var(--accent)">PHASE 1</div><div id="game-dots" style="display:flex; gap:6px; margin-top:5px;"></div></div>
+        <button onclick="speakInput()" style="background:none; border:none; color:white; font-size:32px;">🔊</button>
     </div>
-    <div id="game-mount" style="flex:1; display:flex; flex-direction:column; justify-content:center;"></div>
-    <div id="game-controls"></div>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+        <div class="q-wrap">
+            <div class="q-hint">Target Translation (Spanish)</div>
+            <div id="q-text-en" class="q-main">...</div>
+        </div>
+        <div class="drop-zone" id="game-drop-zone"></div>
+        <div id="game-word-pool" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;"></div>
+    </div>
+    <button class="btn-footer" onclick="evaluateGameStep()" style="margin-top:20px;">VALIDATE NEURAL LINK</button>
 </div>
 
-<div id="scr-cards" class="screen">
+<div id="scr-study" class="screen">
     <div class="nav-game">
-        <button onclick="quitGame()" style="background:none; border:none; color:white; font-size:32px;">✕</button>
-        <div id="card-count" class="stat-tag">1 / 15</div>
+        <button onclick="exitToHome()" style="background:none; border:none; color:white; font-size:32px;">✕</button>
+        <div id="study-progress-tag" class="stat-tag">1 / 15</div>
         <div style="width:32px;"></div>
     </div>
     <div class="fcard-container">
-        <div class="fcard" id="fcard-obj" onclick="this.classList.toggle('flipped')">
+        <div class="fcard" id="study-card-obj" onclick="this.classList.toggle('flipped')">
             <div class="fcard-face fcard-front">
                 <div class="stat-tag" style="margin-bottom:20px;">English Context</div>
-                <div id="f-en" style="font-size:28px; font-weight:900;">...</div>
+                <div id="study-text-en" style="font-size:26px; font-weight:900;">...</div>
+                <div style="margin-top:40px; opacity:0.3; font-size:11px; letter-spacing:2px;">TAP TO DECRYPT</div>
             </div>
             <div class="fcard-face fcard-back">
-                <div class="stat-tag" style="margin-bottom:20px; color:white; opacity:0.8;">Spanish Mastery</div>
-                <div id="f-es" style="font-size:28px; font-weight:900;">...</div>
+                <div class="stat-tag" style="margin-bottom:20px; color:white;">Spanish Decryption</div>
+                <div id="study-text-es" style="font-size:26px; font-weight:900;">...</div>
             </div>
         </div>
     </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:40px;">
-        <button class="tab-btn" onclick="navCard(-1)">PREVIOUS</button>
-        <button class="tab-btn" onclick="navCard(1)">NEXT</button>
+        <button class="tab-btn" onclick="cycleCard(-1)">PREVIOUS</button>
+        <button class="tab-btn" onclick="cycleCard(1)">NEXT</button>
     </div>
 </div>
 
 <div id="neural-overlay">
     <div class="correction-card">
-        <div class="correction-title">Neural Correction Required</div>
-        <div class="diff-box">
-            <div class="diff-label">Your Input</div>
-            <div id="diff-user" class="diff-text" style="color:var(--red);">...</div>
+        <div class="correction-title">Neural Feedback Loop</div>
+        <div style="margin-bottom:20px;">
+            <div class="stat-tag" style="margin-bottom:5px;">Your Attempt</div>
+            <div id="fb-user-text" class="diff-text" style="color:var(--red);">...</div>
         </div>
-        <div class="diff-box">
-            <div class="diff-label">Spanish Target</div>
-            <div id="diff-target" class="diff-text" style="color:var(--green);">...</div>
+        <div>
+            <div class="stat-tag" style="margin-bottom:5px;">Correct Syntax</div>
+            <div id="fb-target-text" class="diff-text" style="color:var(--green);">...</div>
         </div>
     </div>
-    <div id="diff-analysis" style="font-size:16px; line-height:1.6; opacity:0.8; margin-bottom:40px;"></div>
-    <button class="btn-footer" onclick="closeCorrection()">Acknowledge & Sync</button>
-</div>
-
-<div id="recap-overlay">
-    <h1 style="font-size:36px; font-weight:950; margin:0 0 10px;">DOMAIN SECURED</h1>
-    <p id="recap-stats" style="opacity:0.6; margin-bottom:30px;"></p>
-    <div id="recap-list"></div>
-    <button class="btn-footer" id="btn-recap-next" style="margin-top:30px;">Advance to Next Level</button>
+    <div id="fb-analysis-text" style="font-size:16px; line-height:1.6; opacity:0.8; margin-bottom:40px;"></div>
+    <button class="btn-footer" onclick="closeNeuralFeedback()">ACKNOWLEDGE & RE-SYNC</button>
 </div>
 
 <script>
 /**
- * THE CORE DATASET (140+ PHRASES)
+ * THE CURRICULUM ARCHIVE (9 Modules, 135+ Data Points)
  */
 const CURRICULUM = [
     { id: 0, lvl: "A1.1", icon: "🆔", topic: "Identity & Being", data: [
@@ -200,28 +188,28 @@ const CURRICULUM = [
         {es:"Somos una gran familia", en:"We are a big family"}, {es:"Él es un buen hombre", en:"He is a good man"}, {es:"Soy nuevo en la ciudad", en:"I am new in the city"},
         {es:"Ustedes son hermanos", en:"You all are siblings"}, {es:"Es un honor estar aquí", en:"It is an honor to be here"}, {es:"Ella es la doctora principal", en:"She is the lead doctor"}
     ]},
-    { id: 1, lvl: "A1.2", icon: "🆘", topic: "Survival Skills", data: [
+    { id: 1, lvl: "A1.2", icon: "🆘", topic: "Survival Basics", data: [
         {es:"Tengo mucha hambre", en:"I am very hungry"}, {es:"Necesito ayuda", en:"I need help"}, {es:"Quiero un café", en:"I want a coffee"},
         {es:"No hablo español", en:"I don't speak Spanish"}, {es:"¿Dónde está el hotel?", en:"Where is the hotel?"}, {es:"Llama a la policía", en:"Call the police"},
-        {es:"Perdí mi pasaporte", en:"I lost my passport"}, {es:"¿Dónde hay una farmacia?", en:"Where is there a pharmacy?"}, {es:"Necesito un médico urgente", en:"I need a doctor urgently"},
+        {es:"Perdí mi pasaporte", en:"I lost my passport"}, {es:"¿Dónde hay una farmacia?", en:"Where is there a pharmacy?"}, {es:"Tengo una emergencia", en:"I have an emergency"},
         {es:"¿Cuánto cuesta la entrada?", en:"How much is the entry fee?"}, {es:"No tengo dinero", en:"I don't have money"}, {es:"¿Puede hablar más lento?", en:"Can you speak slower?"},
-        {es:"Tengo una emergencia", en:"I have an emergency"}, {es:"Ayúdame por favor", en:"Help me please"}, {es:"¿A qué hora abre?", en:"What time does it open?"}
+        {es:"Ayúdame por favor", en:"Help me please"}, {es:"¿A qué hora abre?", en:"What time does it open?"}, {es:"Necesito un médico urgente", en:"I need a doctor urgently"}
     ]},
-    { id: 2, lvl: "A2.1", icon: "🏙️", topic: "Urban Life", data: [
+    { id: 2, lvl: "A2.1", icon: "🏙️", topic: "Urban Navigation", data: [
         {es:"Tomo el autobús", en:"I take the bus"}, {es:"Vivo en un apartamento", en:"I live in an apartment"}, {es:"Cruza la calle", en:"Cross the street"},
         {es:"El metro es rápido", en:"The metro is fast"}, {es:"Gire a la izquierda", en:"Turn left"}, {es:"Siga derecho dos cuadras", en:"Go straight two blocks"},
         {es:"La parada está cerca", en:"The stop is nearby"}, {es:"Busco el centro comercial", en:"I am looking for the mall"}, {es:"Está al lado del parque", en:"It is next to the park"},
         {es:"Hay mucho tráfico hoy", en:"There is a lot of traffic today"}, {es:"¿Dónde está la catedral?", en:"Where is the cathedral?"}, {es:"Suba por las escaleras", en:"Go up the stairs"},
         {es:"La dirección es correcta", en:"The address is correct"}, {es:"El semáforo está rojo", en:"The traffic light is red"}, {es:"Tengo que bajar aquí", en:"I have to get off here"}
     ]},
-    { id: 3, lvl: "A2.2", icon: "🏢", topic: "Work & Office", data: [
+    { id: 3, lvl: "A2.2", icon: "🏢", topic: "Workplace", data: [
         {es:"Tengo una reunión", en:"I have a meeting"}, {es:"Envío un correo", en:"I send an email"}, {es:"Uso la computadora", en:"I use the computer"},
         {es:"Mi jefe es amable", en:"My boss is kind"}, {es:"Trabajo en ventas", en:"I work in sales"}, {es:"Firmo el contrato legal", en:"I sign the legal contract"},
         {es:"El proyecto es urgente", en:"The project is urgent"}, {es:"Mañana hay un feriado", en:"Tomorrow is a holiday"}, {es:"Necesito el informe final", en:"I need the final report"},
         {es:"¿Cuál es tu salario?", en:"What is your salary?"}, {es:"La empresa es global", en:"The company is global"}, {es:"Tengo una entrevista hoy", en:"I have an interview today"},
         {es:"Ella es la gerente", en:"She is the manager"}, {es:"El equipo es eficiente", en:"The team is efficient"}, {es:"Llego tarde a la oficina", en:"I am late to the office"}
     ]},
-    { id: 4, lvl: "B1.1", icon: "🕰️", topic: "Past Tense", data: [
+    { id: 4, lvl: "B1.1", icon: "🕰️", topic: "Past Memories", data: [
         {es:"Ayer fui al cine", en:"Yesterday I went to the cinema"}, {es:"Hablé con mi jefe", en:"I spoke with my boss"}, {es:"¿Qué hiciste hoy?", en:"What did you do today?"},
         {es:"Viajamos a España", en:"We traveled to Spain"}, {es:"Comimos pizza rica", en:"We ate delicious pizza"}, {es:"Él me dijo la verdad", en:"He told me the truth"},
         {es:"Perdí mis llaves ayer", en:"I lost my keys yesterday"}, {es:"Vimos una gran película", en:"We saw a great movie"}, {es:"Estudié toda la noche", en:"I studied all night"},
@@ -235,21 +223,21 @@ const CURRICULUM = [
         {es:"Animales en extinción", en:"Animals in extinction"}, {es:"Agua potable pura", en:"Pure drinking water"}, {es:"Contaminación del mar", en:"Pollution of the sea"},
         {es:"Energía renovable limpia", en:"Clean renewable energy"}, {es:"Plantar nuevos árboles", en:"To plant new trees"}, {es:"Calentamiento global real", en:"Real global warming"}
     ]},
-    { id: 6, lvl: "B1.3", icon: "💻", topic: "Digital World", data: [
+    { id: 6, lvl: "B1.3", icon: "💻", topic: "Tech & Social", data: [
         {es:"Descarga la aplicación", en:"Download the application"}, {es:"Mi señal es débil", en:"My signal is weak"}, {es:"¿Cuál es la clave?", en:"What is the password?"},
         {es:"Envíame un mensaje", en:"Send me a message"}, {es:"Carga la batería", en:"Charge the battery"}, {es:"Navegar por la red", en:"To surf the net"},
         {es:"El sitio web falló", en:"The website crashed"}, {es:"Actualiza el software", en:"Update the software"}, {es:"Tengo mucha memoria", en:"I have a lot of memory"},
         {es:"Redes sociales activas", en:"Active social networks"}, {es:"El archivo es pesado", en:"The file is heavy"}, {es:"Conectar al wifi gratis", en:"Connect to free wifi"},
         {es:"Pantalla táctil rota", en:"Broken touch screen"}, {es:"Borrar el historial", en:"Clear the history"}, {es:"Error de conexión total", en:"Total connection error"}
     ]},
-    { id: 7, lvl: "B2.1", icon: "⚖️", topic: "Legal Rights", data: [
+    { id: 7, lvl: "B2.1", icon: "⚖️", topic: "Legal System", data: [
         {es:"Firme el contrato", en:"Sign the contract"}, {es:"Es mi derecho", en:"It is my right"}, {es:"Llamaré a mi abogado", en:"I will call my lawyer"},
         {es:"El juez decidió", en:"The judge decided"}, {es:"Bajo la ley actual", en:"Under the law"}, {es:"Propiedad privada real", en:"Real private property"},
         {es:"Un delito muy grave", en:"A serious crime"}, {es:"Declarar la verdad pura", en:"To declare the truth"}, {es:"Pagar la multa hoy", en:"To pay the fine today"},
         {es:"Cumplir el acuerdo", en:"To fulfill the agreement"}, {es:"Tengo pruebas sólidas", en:"I have solid evidence"}, {es:"El veredicto final", en:"The final verdict"},
         {es:"Derechos humanos básicos", en:"Basic human rights"}, {es:"Demandar a la empresa", en:"To sue the company"}, {es:"Cárcel por robo", en:"Jail for robbery"}
     ]},
-    { id: 8, lvl: "B2.2", icon: "📊", topic: "Global Economy", data: [
+    { id: 8, lvl: "B2.2", icon: "📈", topic: "Global Economy", data: [
         {es:"La inflación subió", en:"Inflation rose"}, {es:"Invertir en bolsa", en:"Invest in the stock market"}, {es:"Crecimiento económico", en:"Economic growth"},
         {es:"Tasa de desempleo", en:"Unemployment rate"}, {es:"Deuda externa alta", en:"High external debt"}, {es:"Exportar muchos productos", en:"To export many products"},
         {es:"Análisis financiero real", en:"Real financial analysis"}, {es:"Ganancias netas bajas", en:"Low net profits"}, {es:"Crisis de divisas fuerte", en:"Strong currency crisis"},
@@ -259,215 +247,175 @@ const CURRICULUM = [
 ];
 
 /**
- * ENGINE STATE
+ * PERSISTENT STATE ENGINE
  */
-let state = JSON.parse(localStorage.getItem('titan_monolith_v20')) || {
+let state = JSON.parse(localStorage.getItem('titan_singularity_v22')) || {
     xp: 0, mins: 0, unlocked: 0, completed: [], streak: 0, lastDate: null
 };
 
-let active = {
-    mode: 'path', mod: null, deck: [], cur: null, count: 0, total: 0, errors: 0, cardIdx: 0, startTime: null
+let session = {
+    dashMode: 'path', mod: null, deck: [], cur: null, idx: 0, errors: 0, startTime: null
 };
 
-// INITIALIZATION
-function init() {
-    updateDashboard();
-    renderPath();
-    processStreak();
+// BOOT
+function boot() {
+    refreshUI();
+    renderDashboardList();
+    syncStreak();
 }
 
-function processStreak() {
-    const now = new Date().toDateString();
-    if(state.lastDate !== now) {
+function syncStreak() {
+    const today = new Date().toDateString();
+    if(state.lastDate !== today) {
         state.streak++;
-        state.lastDate = now;
-        save();
+        state.lastDate = today;
+        saveState();
     }
 }
 
-function switchMode(m) {
-    active.mode = m;
+function setDashboardMode(m) {
+    session.dashMode = m;
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-' + (m === 'path' ? 'path' : 'study')).classList.add('active');
-    renderPath();
+    document.getElementById(`btn-tab-${m}`).classList.add('active');
+    renderDashboardList();
 }
 
 /**
- * DASHBOARD RENDERING
+ * DASHBOARD LOGIC
  */
-function renderPath() {
-    const mount = document.getElementById('path-list');
-    mount.innerHTML = '';
+function renderDashboardList() {
+    const container = document.getElementById('path-list');
+    container.innerHTML = '';
     
-    CURRICULUM.forEach((m, idx) => {
-        const isUnlocked = idx <= state.unlocked;
-        const isDone = state.completed.includes(m.id);
-        
-        const node = document.createElement('div');
-        node.className = `node ${!isUnlocked ? 'locked' : ''}`;
-        node.onclick = () => {
+    CURRICULUM.forEach((mod, i) => {
+        const isUnlocked = i <= state.unlocked;
+        const isDone = state.completed.includes(mod.id);
+        const el = document.createElement('div');
+        el.className = `node ${isUnlocked ? '' : 'locked'}`;
+        el.onclick = () => {
             if(!isUnlocked) return;
-            active.mode === 'path' ? launchGame(m) : launchFlashcards(m);
+            session.dashMode === 'path' ? launchGame(mod) : launchStudy(mod);
         };
-        
-        node.innerHTML = `
-            <div class="node-icon">${!isUnlocked ? '🔒' : m.icon}</div>
+        el.innerHTML = `
+            <div class="node-icon">${isUnlocked ? mod.icon : '🔒'}</div>
             <div style="flex:1">
-                <div style="font-size:10px; font-weight:900; color:var(--accent); text-transform:uppercase;">Level ${m.lvl}</div>
-                <div class="node-name">${m.topic}</div>
+                <div class="stat-tag" style="color:var(--accent);">${mod.lvl}</div>
+                <div class="node-name">${mod.topic}</div>
             </div>
             ${isDone ? '<div style="color:var(--green); font-size:24px;">✓</div>' : ''}
         `;
-        mount.appendChild(node);
+        container.appendChild(el);
     });
 }
 
 /**
- * GAME ENGINE CORE
+ * GAME ENGINE
  */
-function launchGame(m) {
-    active = { 
-        ...active, mod: m, deck: [...m.data].sort(() => 0.5 - Math.random()), 
-        count: 0, total: m.data.length, errors: 0, startTime: Date.now() 
-    };
-    document.getElementById('game-title').innerText = m.topic;
+function launchGame(mod) {
+    session.mod = mod;
+    session.deck = [...mod.data].sort(() => 0.5 - Math.random());
+    session.idx = 0;
+    session.errors = 0;
+    session.startTime = Date.now();
+    document.getElementById('game-mod-title').innerText = mod.topic;
     showScreen('scr-game');
-    genDots();
-    nextQuestion();
+    initDots();
+    nextGameStep();
 }
 
-function nextQuestion() {
-    if(active.deck.length === 0) return finalizeGame();
-    active.cur = active.deck.pop();
-    active.count++;
-    updateDots();
-    renderQuestion();
-}
-
-function renderQuestion() {
-    const mount = document.getElementById('game-mount');
-    const controls = document.getElementById('game-controls');
-    mount.innerHTML = ''; controls.innerHTML = '';
-
-    mount.innerHTML = `
-        <div class="q-wrap">
-            <div class="q-hint">Translate to Spanish</div>
-            <div class="q-main" style="font-size: 1.6rem; opacity:0.5;">${active.cur.en}</div>
-        </div>
-        <div class="drop-zone" id="drop-box"></div>
-        <div id="word-pool" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;"></div>
-    `;
-
-    const pool = active.cur.es.split(' ').sort(() => 0.5 - Math.random());
-    pool.forEach(w => {
+function nextGameStep() {
+    if(session.deck.length === 0) return finishGame();
+    session.cur = session.deck.pop();
+    session.idx++;
+    updateDotsUI();
+    
+    document.getElementById('q-text-en').innerText = session.cur.en;
+    const pool = document.getElementById('game-word-pool');
+    const drop = document.getElementById('game-drop-zone');
+    pool.innerHTML = ''; drop.innerHTML = '';
+    
+    session.cur.es.split(' ').sort(() => 0.5 - Math.random()).forEach(word => {
         const chip = document.createElement('div');
         chip.className = 'word-chip';
-        chip.innerText = w;
-        chip.onclick = () => {
-            const target = chip.parentElement.id === 'word-pool' ? document.getElementById('drop-box') : document.getElementById('word-pool');
-            target.appendChild(chip);
-        };
-        document.getElementById('word-pool').appendChild(chip);
+        chip.innerText = word;
+        chip.onclick = () => (chip.parentElement.id === 'game-word-pool' ? drop : pool).appendChild(chip);
+        pool.appendChild(chip);
     });
-
-    controls.innerHTML = `<button class="btn-footer" onclick="validateScramble()">Submit Translation</button>`;
 }
 
-function validateScramble() {
-    const userGuess = Array.from(document.getElementById('drop-box').children).map(c => c.innerText).join(' ');
-    if(userGuess === active.cur.es) {
+function evaluateGameStep() {
+    const guess = Array.from(document.getElementById('game-drop-zone').children).map(c => c.innerText).join(' ');
+    if(guess === session.cur.es) {
         state.xp += 25;
-        nextQuestion();
+        nextGameStep();
     } else {
-        showNeuralCorrection(userGuess, active.cur.es);
+        openNeuralFeedback(guess, session.cur.es);
     }
 }
 
-/**
- * NEURAL CORRECTION ENGINE
- */
-function showNeuralCorrection(guess, target) {
-    document.getElementById('diff-user').innerText = guess || "[No Input]";
-    document.getElementById('diff-target').innerText = target;
+function openNeuralFeedback(guess, target) {
+    document.getElementById('fb-user-text').innerText = guess || "[No Input Detected]";
+    document.getElementById('fb-target-text').innerText = target;
     
-    let analysis = "";
-    const gWords = guess.split(' ');
-    const tWords = target.split(' ');
+    let analysis = "Linguistic mismatch identified. ";
+    const userWords = guess.split(' ');
+    const targetWords = target.split(' ');
 
-    if(gWords.length !== tWords.length) {
-        analysis = `Word count mismatch. Target requires <b>${tWords.length}</b> words, you provided <b>${gWords.length}</b>. Check for missing articles or pronouns.`;
+    if(userWords.length !== targetWords.length) {
+        analysis += `The target requires <b>${targetWords.length}</b> tokens, you provided <b>${userWords.length}</b>. Check for missing connectors or articles.`;
     } else {
-        analysis = "Vocabulary is present but the <b>syntax (word order)</b> is incorrect. In Spanish, word order often determines the emphasis and clarity of the 'Being' vs 'Doing'.";
+        analysis += `You have the correct lexicon, but the <b>syntax</b> (order) is invalid for Spanish. Remember: Adjectives usually follow the noun in this context.`;
     }
 
-    document.getElementById('diff-analysis').innerHTML = analysis;
+    document.getElementById('fb-analysis-text').innerHTML = analysis;
     document.getElementById('neural-overlay').style.display = 'flex';
 }
 
-function closeCorrection() {
+function closeNeuralFeedback() {
     document.getElementById('neural-overlay').style.display = 'none';
-    active.errors++;
-    nextQuestion();
+    session.errors++;
+    nextGameStep();
 }
 
 /**
- * FLASHCARD ENGINE
+ * STUDY ENGINE (FLASHCARDS)
  */
-function launchFlashcards(m) {
-    active.mod = m;
-    active.cardIdx = 0;
-    showScreen('scr-cards');
-    renderCard();
+function launchStudy(mod) {
+    session.mod = mod;
+    session.idx = 0;
+    showScreen('scr-study');
+    renderStudyCard();
 }
 
-function renderCard() {
-    const item = active.mod.data[active.cardIdx];
-    document.getElementById('fcard-obj').classList.remove('flipped');
-    document.getElementById('f-en').innerText = item.en;
-    document.getElementById('f-es').innerText = item.es;
-    document.getElementById('card-count').innerText = `${active.cardIdx + 1} / ${active.mod.data.length}`;
+function renderStudyCard() {
+    const pair = session.mod.data[session.idx];
+    document.getElementById('study-card-obj').classList.remove('flipped');
+    document.getElementById('study-text-en').innerText = pair.en;
+    document.getElementById('study-text-es').innerText = pair.es;
+    document.getElementById('study-progress-tag').innerText = `${session.idx + 1} / ${session.mod.data.length}`;
 }
 
-function navCard(dir) {
-    active.cardIdx = (active.cardIdx + dir + active.mod.data.length) % active.mod.data.length;
-    renderCard();
+function cycleCard(dir) {
+    session.idx = (session.idx + dir + session.mod.data.length) % session.mod.data.length;
+    renderStudyCard();
 }
 
 /**
- * FINALIZE & RECAP
+ * SYSTEM UTILS
  */
-function finalizeGame() {
-    const over = document.getElementById('recap-overlay');
-    over.style.display = 'flex';
-    document.getElementById('recap-stats').innerText = `${active.total} linguistic tokens processed with ${active.errors} corrections.`;
-    
-    const list = document.getElementById('recap-list');
-    list.innerHTML = active.mod.data.map(d => `
-        <div class="recap-item">
-            <div>
-                <div style="font-weight:900; color:var(--accent);">${d.es}</div>
-                <div style="font-size:12px; opacity:0.5;">${d.en}</div>
-            </div>
-        </div>
-    `).join('');
-
-    document.getElementById('btn-recap-next').onclick = () => {
-        if(!state.completed.includes(active.mod.id)) {
-            state.completed.push(active.mod.id);
-            if(active.mod.id === state.unlocked) state.unlocked++;
-        }
-        const sessionMins = Math.floor((Date.now() - active.startTime) / 60000);
-        state.mins += Math.max(sessionMins, 3);
-        save();
-        over.style.display = 'none';
-        quitGame();
-    };
+function finishGame() {
+    if(!state.completed.includes(session.mod.id)) {
+        state.completed.push(session.mod.id);
+        if(session.mod.id === state.unlocked) state.unlocked++;
+    }
+    const elapsed = Math.floor((Date.now() - session.startTime) / 60000);
+    state.mins += Math.max(elapsed, 2);
+    state.xp += 100;
+    saveState();
+    exitToHome();
 }
 
-/**
- * UTILS
- */
-function updateDashboard() {
+function refreshUI() {
     document.getElementById('disp-xp').innerText = state.xp.toLocaleString();
     document.getElementById('disp-min').innerText = state.mins;
     document.getElementById('disp-streak').innerText = `🔥 ${state.streak}`;
@@ -476,30 +424,41 @@ function updateDashboard() {
     document.getElementById('bar-main').style.width = p + "%";
     
     let rank = "RECRUIT";
-    if(state.xp > 1000) rank = "ADEPT";
-    if(state.xp > 5000) rank = "TITAN";
+    if(state.xp > 2000) rank = "ELITE";
+    if(state.xp > 8000) rank = "TITAN";
     document.getElementById('disp-rank').innerText = rank;
 }
 
-function quitGame() { showScreen('scr-dash'); init(); }
-function save() { localStorage.setItem('titan_monolith_v20', JSON.stringify(state)); }
-function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-function speakCurrent() {
-    const u = new SpeechSynthesisUtterance(active.cur.es);
-    u.lang = 'es-MX'; u.rate = 0.8;
-    window.speechSynthesis.speak(u);
-}
-function genDots() {
-    const m = document.getElementById('game-dots'); m.innerHTML = '';
-    for(let i=0; i<active.total; i++) m.innerHTML += `<div style="width:4px; height:4px; border-radius:50%; background:var(--border);"></div>`;
-}
-function updateDots() {
-    const dots = document.getElementById('game-dots').children;
-    if(dots[active.count-1]) dots[active.count-1].style.background = 'var(--accent)';
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
 }
 
-// BOOT
-init();
+function exitToHome() { showScreen('scr-dash'); boot(); }
+function saveState() { localStorage.setItem('titan_singularity_v22', JSON.stringify(state)); }
+
+function initDots() {
+    const m = document.getElementById('game-dots'); m.innerHTML = '';
+    for(let i=0; i<session.mod.data.length; i++) {
+        const d = document.createElement('div');
+        d.style.cssText = 'width:5px; height:5px; border-radius:50%; background:var(--border);';
+        m.appendChild(d);
+    }
+}
+
+function updateDotsUI() {
+    const dots = document.getElementById('game-dots').children;
+    if(dots[session.idx-1]) dots[session.idx-1].style.background = 'var(--accent)';
+}
+
+function speakInput() {
+    const u = new SpeechSynthesisUtterance(session.cur.es);
+    u.lang = 'es-MX'; u.rate = 0.85;
+    window.speechSynthesis.speak(u);
+}
+
+// LAUNCH
+boot();
 </script>
 </body>
 </html>
