@@ -22,17 +22,11 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         
         body { 
-            background: var(--bg); 
-            color: var(--text); 
-            margin: 0; 
-            font-family: 'Inter', -apple-system, system-ui, sans-serif; 
-            height: 100vh; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column;
+            background: var(--bg); color: var(--text); margin: 0; 
+            font-family: 'Inter', -apple-system, sans-serif; 
+            height: 100vh; overflow: hidden; display: flex; flex-direction: column;
         }
 
-        /* --- UI SCAFFOLDING --- */
         .screen { display: none; flex-direction: column; height: 100%; width: 100%; padding: 25px; overflow-y: auto; }
         .screen.active { display: flex; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         
@@ -45,24 +39,13 @@
         .brand { font-size: 28px; font-weight: 950; letter-spacing: -1.5px; }
         .brand span { color: var(--accent); }
 
-        /* --- DASHBOARD COMPONENTS --- */
+        /* DASHBOARD */
         .mastery-card { 
             background: linear-gradient(165deg, var(--card) 0%, #1e293b 100%); 
-            border-radius: 35px; 
-            padding: 30px; 
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow); 
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
+            border-radius: 35px; padding: 30px; border: 1px solid var(--border);
+            box-shadow: var(--shadow); margin-bottom: 30px; position: relative; overflow: hidden;
         }
         
-        .mastery-card::before {
-            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
         .progress-label { display: flex; justify-content: space-between; font-size: 11px; font-weight: 900; letter-spacing: 2px; opacity: 0.8; text-transform: uppercase; }
         .bar-outer { width: 100%; height: 14px; background: rgba(0,0,0,0.4); border-radius: 7px; margin: 18px 0; overflow: hidden; border: 1px solid var(--border); }
         .bar-inner { height: 100%; background: linear-gradient(90deg, var(--accent), var(--blue)); width: 0%; transition: 1.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -72,136 +55,61 @@
         .stat-val { display: block; font-size: 24px; font-weight: 950; color: var(--gold); }
         .stat-tag { font-size: 9px; text-transform: uppercase; font-weight: 900; opacity: 0.5; letter-spacing: 1px; }
 
-        /* --- PATH ARCHITECTURE --- */
+        /* PATH */
         .path-title { font-size: 12px; font-weight: 900; color: var(--blue); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
         .path-title::after { content: ""; flex: 1; height: 1px; background: var(--border); }
 
         .node { 
-            background: var(--card); 
-            padding: 24px; 
-            border-radius: 28px; 
-            margin-bottom: 16px;
-            border: 1px solid var(--border); 
-            display: flex; 
-            align-items: center; 
-            cursor: pointer; 
-            transition: all 0.3s ease;
-            position: relative;
+            background: var(--card); padding: 24px; border-radius: 28px; margin-bottom: 16px;
+            border: 1px solid var(--border); display: flex; align-items: center; cursor: pointer; transition: 0.3s;
         }
-
-        .node:active { transform: scale(0.97); }
         .node.locked { opacity: 0.3; filter: grayscale(1); cursor: not-allowed; border-style: dashed; }
         .node.done { border-color: var(--green); background: rgba(16, 185, 129, 0.03); }
         .node.active { border-color: var(--accent); box-shadow: 0 0 20px rgba(139, 92, 246, 0.2); }
 
-        .node-icon { 
-            width: 56px; height: 56px; 
-            background: var(--glass); 
-            border-radius: 18px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 26px; 
-            margin-right: 22px;
-            border: 1px solid var(--border);
-        }
-        .node-name { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+        .node-icon { width: 56px; height: 56px; background: var(--glass); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 26px; margin-right: 22px; }
+        .node-name { font-size: 20px; font-weight: 800; }
         .node-meta { font-size: 10px; font-weight: 900; color: var(--accent); margin-bottom: 4px; text-transform: uppercase; }
 
-        /* --- GAME ENGINE UI --- */
+        /* GAME */
         .nav-game { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .game-header-info { text-align: center; }
         .q-wrap { text-align: center; margin: 20px 0 50px; }
-        .q-hint { font-size: 13px; color: var(--accent); font-weight: 900; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 15px; }
-        .q-main { font-size: 2.6rem; font-weight: 950; line-height: 1.1; letter-spacing: -1px; }
-        .q-sub { font-size: 1.4rem; opacity: 0.4; margin-top: 10px; font-weight: 600; }
+        .q-hint { font-size: 13px; color: var(--accent); font-weight: 900; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; }
+        .q-main { font-size: 2.5rem; font-weight: 950; line-height: 1.1; letter-spacing: -1px; }
+        .q-sub { font-size: 1.5rem; opacity: 0.5; margin-top: 10px; font-weight: 700; }
 
         .opt-stack { display: grid; gap: 14px; width: 100%; }
         .opt-btn { 
-            background: var(--card); 
-            padding: 24px; 
-            border-radius: 24px; 
-            border: 1px solid var(--border); 
-            color: var(--text); 
-            font-weight: 800; 
-            text-align: left; 
-            font-size: 18px; 
-            cursor: pointer; 
-            transition: 0.2s;
+            background: var(--card); padding: 24px; border-radius: 24px; border: 1px solid var(--border); 
+            color: var(--text); font-weight: 800; font-size: 18px; cursor: pointer; transition: 0.2s;
         }
-        .opt-btn:hover { background: var(--border); }
-        .opt-btn.correct { background: var(--green) !important; border-color: var(--green); color: white; transform: scale(1.02); }
-        .opt-btn.wrong { background: var(--red) !important; border-color: var(--red); color: white; animation: shake 0.4s; }
+        .opt-btn.correct { background: var(--green) !important; color: white; }
+        .opt-btn.wrong { background: var(--red) !important; color: white; animation: shake 0.4s; }
 
         .drop-zone { 
-            min-height: 140px; 
-            background: rgba(0,0,0,0.2); 
-            border: 2px dashed var(--border); 
-            border-radius: 32px; 
-            padding: 25px; 
-            margin-bottom: 30px; 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 12px; 
-            justify-content: center; 
-            align-items: center; 
+            min-height: 120px; background: rgba(0,0,0,0.2); border: 2px dashed var(--border); 
+            border-radius: 32px; padding: 20px; margin-bottom: 25px; display: flex; flex-wrap: wrap; 
+            gap: 10px; justify-content: center; align-items: center; 
         }
         .word-chip { 
-            background: var(--accent); 
-            padding: 16px 24px; 
-            border-radius: 18px; 
-            font-weight: 900; 
-            color: white; 
-            cursor: pointer; 
-            box-shadow: 0 5px 0 #6d28d9; 
-            transition: 0.1s; 
-            font-size: 17px;
+            background: var(--accent); padding: 15px 22px; border-radius: 18px; 
+            font-weight: 900; color: white; cursor: pointer; box-shadow: 0 5px 0 #6d28d9; 
         }
-        .word-chip:active { transform: translateY(4px); box-shadow: 0 1px 0 #6d28d9; }
 
-        /* --- RECAP OVERLAY --- */
-        #recap-overlay { 
-            position: fixed; 
-            inset: 0; 
-            background: var(--bg); 
-            z-index: 1000; 
-            display: none; 
-            flex-direction: column; 
-            padding: 40px 25px; 
-            overflow-y: auto;
-        }
+        /* RECAP */
+        #recap-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: none; flex-direction: column; padding: 40px 25px; overflow-y: auto; }
         .recap-hero { background: var(--card); border-radius: 35px; padding: 35px; border: 1px solid var(--border); margin-bottom: 25px; text-align: center; }
-        .recap-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
-        .recap-item { background: var(--glass); padding: 18px; border-radius: 20px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .recap-es { font-weight: 900; color: var(--accent); font-size: 16px; }
-        .recap-en { font-size: 13px; opacity: 0.5; font-weight: 600; }
-
+        .recap-item { background: var(--glass); padding: 18px; border-radius: 20px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .recap-es { font-weight: 900; color: var(--accent); }
         .bridge-card { background: linear-gradient(to right, #1e1b4b, #0f172a); padding: 25px; border-radius: 25px; border: 1px solid var(--blue); margin-bottom: 30px; }
 
-        /* --- UI COMPONENTS --- */
         .btn-footer { 
-            background: var(--accent); 
-            color: white; 
-            border: none; 
-            padding: 25px; 
-            border-radius: 25px; 
-            font-size: 20px; 
-            font-weight: 950; 
-            width: 100%; 
-            cursor: pointer; 
-            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.4); 
-            margin-top: auto;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            background: var(--accent); color: white; border: none; padding: 25px; border-radius: 25px; 
+            font-size: 18px; font-weight: 950; width: 100%; cursor: pointer; text-transform: uppercase;
         }
         
-        .tab-bar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 25px; }
-        .btn-tab { background: var(--card); border: 1px solid var(--border); color: white; padding: 12px; border-radius: 15px; font-size: 11px; font-weight: 900; cursor: pointer; text-transform: uppercase; opacity: 0.6; }
-        .btn-tab.active { background: var(--accent); border-color: var(--accent); opacity: 1; box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3); }
-
         @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        ::-webkit-scrollbar { width: 0px; }
     </style>
 </head>
 <body>
@@ -209,428 +117,101 @@
 <div id="scr-dash" class="screen active">
     <div class="header">
         <div class="brand">BLINK<span>TITAN</span></div>
-        <div style="text-align: right;">
-            <div id="disp-streak" style="font-size: 24px; font-weight: 950; color: #ff4d4d;">🔥 0</div>
-            <div class="stat-tag">Global Streak</div>
-        </div>
+        <div id="disp-streak" style="font-size: 24px; font-weight: 950; color: #ff4d4d;">🔥 0</div>
     </div>
-
     <div class="mastery-card">
-        <div class="progress-label"><span>Fluency Index</span><span id="disp-pct">0.0%</span></div>
+        <div class="progress-label"><span>Mastery Index</span><span id="disp-pct">0.0%</span></div>
         <div class="bar-outer"><div id="bar-main" class="bar-inner"></div></div>
         <div class="stat-grid">
-            <div class="stat-box"><span class="stat-val" id="disp-xp">0</span><span class="stat-tag">Mastery XP</span></div>
-            <div class="stat-box"><span class="stat-val" id="disp-min">0</span><span class="stat-tag">Focus Mins</span></div>
-            <div class="stat-box"><span class="stat-val" id="disp-rank">RECRUIT</span><span class="stat-tag">Titan Rank</span></div>
+            <div class="stat-box"><span class="stat-val" id="disp-xp">0</span><span class="stat-tag">XP</span></div>
+            <div class="stat-box"><span class="stat-val" id="disp-min">0</span><span class="stat-tag">MINS</span></div>
+            <div class="stat-box"><span class="stat-val" id="disp-rank">RECRUIT</span><span class="stat-tag">RANK</span></div>
         </div>
     </div>
-
-    <div class="tab-bar">
-        <button class="btn-tab active" onclick="switchTab('path')">Trajectory</button>
-        <button class="btn-tab" onclick="switchTab('verbs')">Verb Drive</button>
-        <button class="btn-tab" onclick="switchTab('dict')">Glossary</button>
-    </div>
-
-    <div id="dash-scroll-area">
-        <div id="path-container"></div>
-    </div>
+    <div id="path-container"></div>
 </div>
 
 <div id="scr-game" class="screen">
     <div class="nav-game">
-        <button onclick="quitGame()" style="background:none; border:none; color:white; font-size:32px; font-weight:200;">✕</button>
-        <div class="game-header-info">
-            <div id="mod-tag" class="stat-tag" style="color:var(--accent); margin-bottom: 4px;">LEVEL 1.1</div>
-            <div id="game-dots" style="display:flex; gap:6px; justify-content:center;"></div>
-        </div>
+        <button onclick="quitGame()" style="background:none; border:none; color:white; font-size:32px;">✕</button>
+        <div style="text-align:center;"><div id="mod-tag" class="stat-tag" style="color:var(--accent)">LEVEL</div><div id="game-dots" style="display:flex; gap:6px; margin-top:5px;"></div></div>
         <button onclick="triggerAudio()" style="background:none; border:none; color:white; font-size:32px;">🔊</button>
     </div>
-    
-    <div id="game-canvas" style="flex:1; display:flex; flex-direction:column; justify-content:center;">
-        </div>
-
-    <div id="game-controls" style="padding-bottom:20px;">
-        </div>
+    <div id="game-canvas" style="flex:1; display:flex; flex-direction:column; justify-content:center;"></div>
+    <div id="game-controls"></div>
 </div>
 
 <div id="recap-overlay">
     <div class="recap-hero">
-        <div class="stat-tag" style="color:var(--green); margin-bottom: 10px;">Domain Secured</div>
-        <h1 id="recap-title" style="margin:0; font-size:36px; font-weight:950; letter-spacing: -1.5px;">Identity</h1>
-        <p id="recap-performance" style="opacity: 0.6; font-weight: 700; margin-top: 8px;">16/16 Tokens processed perfectly.</p>
+        <h1 id="recap-title" style="margin:0; font-size:32px;">Identity</h1>
+        <p id="recap-perf" style="opacity:0.6; font-weight:700;">Complete</p>
     </div>
-
     <div class="path-title">Knowledge Recap</div>
-    <div id="recap-list" class="recap-list"></div>
-
+    <div id="recap-list" style="margin-bottom:20px;"></div>
     <div class="bridge-card">
-        <div class="stat-tag" style="color:var(--blue); margin-bottom: 8px;">Bridge Logic Unlocking</div>
-        <h2 id="bridge-next-lvl" style="margin:0; font-size:22px;">Next: Survival Skills</h2>
-        <p style="margin:5px 0 0; opacity: 0.6; font-size: 13px;">Bridging specialized vocabulary to your neural path.</p>
+        <div class="stat-tag" style="color:var(--blue)">Bridge Unlocked</div>
+        <h2 id="bridge-next" style="margin:0;">Next Domain</h2>
     </div>
-
     <button class="btn-footer" id="btn-recap-finish">Master & Continue</button>
 </div>
 
 <script>
 /**
- * THE CURRICULUM DATASET v17.0
- * Format: [Base 5-6 Phrases] + [10 Specialized Domain Phrases]
+ * RECODED CURRICULUM (15+ Phrases per module)
  */
 const CURRICULUM = [
     { id: 0, lvl: "A1.1", icon: "🆔", topic: "Identity & Being", data: [
         {es:"Yo soy de Colombia", en:"I am from Colombia"}, {es:"Él es profesor", en:"He is a teacher"}, {es:"Nosotros somos amigos", en:"We are friends"},
-        {es:"¿Eres de Argentina?", en:"Are you from Argentina?"}, {es:"Soy estudiante", en:"I am a student"}, 
-        // 10 EXTRA
-        {es:"Ella es arquitecta", en:"She is an architect"}, {es:"Ellos son mis padres", en:"They are my parents"}, {es:"Usted es muy inteligente", en:"You are very intelligent"},
-        {es:"¿Quién es el dueño?", en:"Who is the owner?"}, {es:"Somos una gran familia", en:"We are a big family"}, {es:"Él es un buen hombre", en:"He is a good man"},
-        {es:"Soy nuevo en la ciudad", en:"I am new in the city"}, {es:"Ustedes son hermanos", en:"You all are siblings"}, {es:"Es un honor estar aquí", en:"It is an honor to be here"},
-        {es:"Ella es la doctora principal", en:"She is the lead doctor"}
+        {es:"¿Eres de Argentina?", en:"Are you from Argentina?"}, {es:"Soy estudiante", en:"I am a student"}, {es:"Ella es arquitecta", en:"She is an architect"},
+        {es:"Ellos son mis padres", en:"They are my parents"}, {es:"Usted es muy inteligente", en:"You are very intelligent"}, {es:"¿Quién es el dueño?", en:"Who is the owner?"},
+        {es:"Somos una gran familia", en:"We are a big family"}, {es:"Él es un buen hombre", en:"He is a good man"}, {es:"Soy nuevo en la ciudad", en:"I am new in the city"},
+        {es:"Ustedes son hermanos", en:"You all are siblings"}, {es:"Es un honor estar aquí", en:"It is an honor to be here"}, {es:"Ella es la doctora principal", en:"She is the lead doctor"}
     ]},
     { id: 1, lvl: "A1.2", icon: "🆘", topic: "Survival Skills", data: [
         {es:"Tengo mucha hambre", en:"I am very hungry"}, {es:"Necesito ayuda", en:"I need help"}, {es:"Quiero un café", en:"I want a coffee"},
-        {es:"No hablo español", en:"I don't speak Spanish"}, {es:"¿Dónde está el hotel?", en:"Where is the hotel?"},
-        // 10 EXTRA
-        {es:"Llama a la policía", en:"Call the police"}, {es:"Perdí mi pasaporte", en:"I lost my passport"}, {es:"¿Dónde hay una farmacia?", en:"Where is there a pharmacy?"},
-        {es:"Necesito un médico urgente", en:"I need a doctor urgently"}, {es:"¿Cuánto cuesta la entrada?", en:"How much is the entry fee?"}, {es:"No tengo dinero", en:"I don't have money"},
-        {es:"¿Puede hablar más lento?", en:"Can you speak slower?"}, {es:"Tengo una emergencia", en:"I have an emergency"}, {es:"Ayúdame por favor", en:"Help me please"},
-        {es:"¿A qué hora abre?", en:"What time does it open?"}
+        {es:"No hablo español", en:"I don't speak Spanish"}, {es:"¿Dónde está el hotel?", en:"Where is the hotel?"}, {es:"Llama a la policía", en:"Call the police"},
+        {es:"Perdí mi pasaporte", en:"I lost my passport"}, {es:"¿Dónde hay una farmacia?", en:"Where is there a pharmacy?"}, {es:"Necesito un médico urgente", en:"I need a doctor urgently"},
+        {es:"¿Cuánto cuesta la entrada?", en:"How much is the entry fee?"}, {es:"No tengo dinero", en:"I don't have money"}, {es:"¿Puede hablar más lento?", en:"Can you speak slower?"},
+        {es:"Tengo una emergencia", en:"I have an emergency"}, {es:"Ayúdame por favor", en:"Help me please"}, {es:"¿A qué hora abre?", en:"What time does it open?"}
     ]},
-    { id: 2, lvl: "A2.1", icon: "🏙️", topic: "Urban Navigation", data: [
+    { id: 2, lvl: "A2.1", icon: "🏙️", topic: "Urban Life", data: [
         {es:"Tomo el autobús", en:"I take the bus"}, {es:"Vivo en un apartamento", en:"I live in an apartment"}, {es:"Cruza la calle", en:"Cross the street"},
-        {es:"El metro es rápido", en:"The metro is fast"}, {es:"Gire a la izquierda", en:"Turn left"},
-        // 10 EXTRA
-        {es:"Siga derecho dos cuadras", en:"Go straight two blocks"}, {es:"La parada está cerca", en:"The stop is nearby"}, {es:"Busco el centro comercial", en:"I am looking for the mall"},
-        {es:"Está al lado del parque", en:"It is next to the park"}, {es:"Hay mucho tráfico hoy", en:"There is a lot of traffic today"}, {es:"¿Dónde está la catedral?", en:"Where is the cathedral?"},
-        {es:"Suba por las escaleras", en:"Go up the stairs"}, {es:"La dirección es correcta", en:"The address is correct"}, {es:"El semáforo está rojo", en:"The traffic light is red"},
-        {es:"Tengo que bajar aquí", en:"I have to get off here"}
+        {es:"El metro es rápido", en:"The metro is fast"}, {es:"Gire a la izquierda", en:"Turn left"}, {es:"Siga derecho dos cuadras", en:"Go straight two blocks"},
+        {es:"La parada está cerca", en:"The stop is nearby"}, {es:"Busco el centro comercial", en:"I am looking for the mall"}, {es:"Está al lado del parque", en:"It is next to the park"},
+        {es:"Hay mucho tráfico hoy", en:"There is a lot of traffic today"}, {es:"¿Dónde está la catedral?", en:"Where is the cathedral?"}, {es:"Suba por las escaleras", en:"Go up the stairs"},
+        {es:"La dirección es correcta", en:"The address is correct"}, {es:"El semáforo está rojo", en:"The traffic light is red"}, {es:"Tengo que bajar aquí", en:"I have to get off here"}
     ]},
-    { id: 3, lvl: "A2.2", icon: "🏢", topic: "Professional Office", data: [
+    { id: 3, lvl: "A2.2", icon: "🏢", topic: "Work & Office", data: [
         {es:"Tengo una reunión", en:"I have a meeting"}, {es:"Envío un correo", en:"I send an email"}, {es:"Uso la computadora", en:"I use the computer"},
-        {es:"Mi jefe es amable", en:"My boss is kind"}, {es:"Trabajo en ventas", en:"I work in sales"},
-        // 10 EXTRA
-        {es:"Firmo el contrato legal", en:"I sign the legal contract"}, {es:"El proyecto es urgente", en:"The project is urgent"}, {es:"Mañana hay un feriado", en:"Tomorrow is a holiday"},
-        {es:"Necesito el informe final", en:"I need the final report"}, {es:"¿Cuál es tu salario?", en:"What is your salary?"}, {es:"La empresa es global", en:"The company is global"},
-        {es:"Tengo una entrevista hoy", en:"I have an interview today"}, {es:"Ella es la gerente", en:"She is the manager"}, {es:"El equipo es eficiente", en:"The team is efficient"},
-        {es:"Llego tarde a la oficina", en:"I am late to the office"}
+        {es:"Mi jefe es amable", en:"My boss is kind"}, {es:"Trabajo en ventas", en:"I work in sales"}, {es:"Firmo el contrato legal", en:"I sign the legal contract"},
+        {es:"El proyecto es urgente", en:"The project is urgent"}, {es:"Mañana hay un feriado", en:"Tomorrow is a holiday"}, {es:"Necesito el informe final", en:"I need the final report"},
+        {es:"¿Cuál es tu salario?", en:"What is your salary?"}, {es:"La empresa es global", en:"The company is global"}, {es:"Tengo una entrevista hoy", en:"I have an interview today"},
+        {es:"Ella es la gerente", en:"She is the manager"}, {es:"El equipo es eficiente", en:"The team is efficient"}, {es:"Llego tarde a la oficina", en:"I am late to the office"}
     ]},
     { id: 4, lvl: "B1.1", icon: "🕰️", topic: "Past Memories", data: [
         {es:"Ayer fui al cine", en:"Yesterday I went to the cinema"}, {es:"Hablé con mi jefe", en:"I spoke with my boss"}, {es:"¿Qué hiciste hoy?", en:"What did you do today?"},
-        {es:"Viajamos a España", en:"We traveled to Spain"}, {es:"Comimos pizza rica", en:"We ate delicious pizza"},
-        // 10 EXTRA
-        {es:"Él me dijo la verdad", en:"He told me the truth"}, {es:"Perdí mis llaves ayer", en:"I lost my keys yesterday"}, {es:"Vimos una gran película", en:"We saw a great movie"},
-        {es:"Estudié toda la noche", en:"I studied all night"}, {es:"Ellos compraron la casa", en:"They bought the house"}, {es:"Fue un día increíble", en:"It was an incredible day"},
-        {es:"¿Dónde estuviste el lunes?", en:"Where were you on Monday?"}, {es:"Hice mi tarea temprano", en:"I did my homework early"}, {es:"Conocí a tu hermano", en:"I met your brother"},
-        {es:"Llegamos tarde al tren", en:"We arrived late to the train"}
+        {es:"Viajamos a España", en:"We traveled to Spain"}, {es:"Comimos pizza rica", en:"We ate delicious pizza"}, {es:"Él me dijo la verdad", en:"He told me the truth"},
+        {es:"Perdí mis llaves ayer", en:"I lost my keys yesterday"}, {es:"Vimos una gran película", en:"We saw a great movie"}, {es:"Estudié toda la noche", en:"I studied all night"},
+        {es:"Ellos compraron la casa", en:"They bought the house"}, {es:"Fue un día increíble", en:"It was an incredible day"}, {es:"¿Dónde estuviste el lunes?", en:"Where were you on Monday?"},
+        {es:"Hice mi tarea temprano", en:"I did my homework early"}, {es:"Conocí a tu hermano", en:"I met your brother"}, {es:"Llegamos tarde al tren", en:"We arrived late to the train"}
     ]},
-    { id: 5, lvl: "B1.2", icon: "🌍", topic: "Environment & Eco", data: [
+    { id: 5, lvl: "B1.2", icon: "🌍", topic: "Environment", data: [
         {es:"Debemos reciclar más", en:"We must recycle more"}, {es:"El clima está cambiando", en:"The climate is changing"}, {es:"Protege los bosques", en:"Protect the forests"},
-        {es:"Ahorra energía eléctrica", en:"Save electrical energy"}, {es:"No tires basura", en:"Don't throw trash"},
-        // 10 EXTRA
-        {es:"El aire está muy sucio", en:"The air is very dirty"}, {es:"Cuidar el planeta tierra", en:"To care for planet earth"}, {es:"Usa paneles solares", en:"Use solar panels"},
-        {es:"La selva es inmensa", en:"The jungle is immense"}, {es:"Animales en extinción", en:"Animals in extinction"}, {es:"Agua potable pura", en:"Pure drinking water"},
-        {es:"Contaminación del mar", en:"Pollution of the sea"}, {es:"Energía renovable limpia", en:"Clean renewable energy"}, {es:"Plantar nuevos árboles", en:"To plant new trees"},
-        {es:"Calentamiento global real", en:"Real global warming"}
+        {es:"Ahorra energía eléctrica", en:"Save electrical energy"}, {es:"No tires basura", en:"Don't throw trash"}, {es:"El aire está muy sucio", en:"The air is very dirty"},
+        {es:"Cuidar el planeta tierra", en:"To care for planet earth"}, {es:"Usa paneles solares", en:"Use solar panels"}, {es:"La selva es inmensa", en:"The jungle is immense"},
+        {es:"Animales en extinción", en:"Animals in extinction"}, {es:"Agua potable pura", en:"Pure drinking water"}, {es:"Contaminación del mar", en:"Pollution of the sea"},
+        {es:"Energía renovable limpia", en:"Clean renewable energy"}, {es:"Plantar nuevos árboles", en:"To plant new trees"}, {es:"Calentamiento global real", en:"Real global warming"}
     ]},
-    { id: 6, lvl: "B1.3", icon: "💻", topic: "Digital World", data: [
+    { id: 6, lvl: "B1.3", icon: "📱", topic: "Digital Tech", data: [
         {es:"Descarga la aplicación", en:"Download the application"}, {es:"Mi señal es débil", en:"My signal is weak"}, {es:"¿Cuál es la clave?", en:"What is the password?"},
-        {es:"Envíame un mensaje", en:"Send me a message"}, {es:"Carga la batería", en:"Charge the battery"},
-        // 10 EXTRA
-        {es:"Navegar por la red", en:"To surf the net"}, {es:"El sitio web falló", en:"The website crashed"}, {es:"Actualiza el software", en:"Update the software"},
-        {es:"Tengo mucha memoria", en:"I have a lot of memory"}, {es:"Redes sociales activas", en:"Active social networks"}, {es:"El archivo es pesado", en:"The file is heavy"},
-        {es:"Conectar al wifi gratis", en:"Connect to free wifi"}, {es:"Pantalla táctil rota", en:"Broken touch screen"}, {es:"Borrar el historial", en:"Clear the history"},
-        {es:"Error de conexión total", en:"Total connection error"}
+        {es:"Envíame un mensaje", en:"Send me a message"}, {es:"Carga la batería", en:"Charge the battery"}, {es:"Navegar por la red", en:"To surf the net"},
+        {es:"El sitio web falló", en:"The website crashed"}, {es:"Actualiza el software", en:"Update the software"}, {es:"Tengo mucha memoria", en:"I have a lot of memory"},
+        {es:"Redes sociales activas", en:"Active social networks"}, {es:"El archivo es pesado", en:"The file is heavy"}, {es:"Conectar al wifi gratis", en:"Connect to free wifi"},
+        {es:"Pantalla táctil rota", en:"Broken touch screen"}, {es:"Borrar el historial", en:"Clear the history"}, {es:"Error de conexión total", en:"Total connection error"}
     ]},
-    { id: 7, lvl: "B2.1", icon: "⚖️", topic: "Legal Framework", data: [
+    { id: 7, lvl: "B2.1", icon: "⚖️", topic: "Legal Domain", data: [
         {es:"Firme el contrato", en:"Sign the contract"}, {es:"Es mi derecho", en:"It is my right"}, {es:"Llamaré a mi abogado", en:"I will call my lawyer"},
-        {es:"El juez decidió", en:"The judge decided"}, {es:"Bajo la ley actual", en:"Under the current law"},
-        // 10 EXTRA
-        {es:"Propiedad privada real", en:"Real private property"}, {es:"Un delito muy grave", en:"A very serious crime"}, {es:"Declarar la verdad pura", en:"To declare the pure truth"},
-        {es:"Pagar la multa hoy", en:"To pay the fine today"}, {es:"Cumplir el acuerdo", en:"To fulfill the agreement"}, {es:"Tengo pruebas sólidas", en:"I have solid evidence"},
-        {es:"El veredicto final", en:"The final verdict"}, {es:"Derechos humanos básicos", en:"Basic human rights"}, {es:"Demandar a la empresa", en:"To sue the company"},
-        {es:"Cárcel por robo", en:"Jail for robbery"}
-    ]},
-    { id: 8, lvl: "B2.2", icon: "📊", topic: "Macro Economics", data: [
-        {es:"La inflación subió", en:"Inflation rose"}, {es:"Invertir en bolsa", en:"Invest in the stock market"}, {es:"Crecimiento económico", en:"Economic growth"},
-        {es:"Tasa de desempleo", en:"Unemployment rate"}, {es:"Deuda externa alta", en:"High external debt"},
-        // 10 EXTRA
-        {es:"Exportar muchos productos", en:"To export many products"}, {es:"Análisis financiero real", en:"Real financial analysis"}, {es:"Ganancias netas bajas", en:"Low net profits"},
-        {es:"Crisis de divisas fuerte", en:"Strong currency crisis"}, {es:"Presupuesto anual listo", en:"Annual budget ready"}, {es:"Impuestos muy altos", en:"Very high taxes"},
-        {es:"El mercado global cae", en:"The global market falls"}, {es:"Riesgo de inversión", en:"Investment risk"}, {es:"Producto interno bruto", en:"Gross domestic product"},
-        {es:"Socio comercial clave", en:"Key trading partner"}
-    ]}
-];
-
-/**
- * CORE STATE MACHINE
- */
-let state = JSON.parse(localStorage.getItem('titan_mastery_v17')) || {
-    xp: 0, 
-    mins: 0, 
-    unlocked: 0, 
-    streak: 0, 
-    lastDate: null, 
-    completed: []
-};
-
-let active = { 
-    mod: null, 
-    deck: [], 
-    cur: null, 
-    count: 0, 
-    total: 0, 
-    errors: 0, 
-    startTime: null 
-};
-
-// INITIALIZATION
-function init() {
-    updateDashboard();
-    renderPath();
-    processStreak();
-}
-
-function processStreak() {
-    const today = new Date().toDateString();
-    if(state.lastDate !== today) {
-        const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-        if(state.lastDate === yesterday.toDateString()) state.streak++;
-        else if(state.lastDate) state.streak = 1;
-        state.lastDate = today;
-        save();
-    }
-}
-
-// DASHBOARD LOGIC
-function renderPath() {
-    const container = document.getElementById('path-container');
-    container.innerHTML = '<div class="path-title">Knowledge Trajectory</div>';
-    
-    CURRICULUM.forEach((m, idx) => {
-        const isUnlocked = idx <= state.unlocked;
-        const isDone = state.completed.includes(m.id);
-        const nodeClass = isDone ? 'done' : (isUnlocked ? 'active' : 'locked');
-
-        const div = document.createElement('div');
-        div.className = `node ${nodeClass}`;
-        div.onclick = () => { if(isUnlocked) launchModule(m); };
-        
-        div.innerHTML = `
-            <div class="node-icon">${!isUnlocked ? '🔒' : m.icon}</div>
-            <div style="flex:1">
-                <div class="node-meta">${m.lvl} • ${isDone ? 'Conquered' : (isUnlocked ? 'Available' : 'Locked')}</div>
-                <div class="node-name">${m.topic}</div>
-            </div>
-            ${isDone ? '<div style="color:var(--green); font-size:24px;">✓</div>' : ''}
-        `;
-        container.appendChild(div);
-    });
-}
-
-function switchTab(type) {
-    const tabs = document.querySelectorAll('.btn-tab');
-    tabs.forEach(t => t.classList.remove('active'));
-    event.target.classList.add('active');
-    
-    const container = document.getElementById('path-container');
-    if(type === 'path') renderPath();
-    else if(type === 'verbs') container.innerHTML = '<p style="padding:40px; text-align:center; opacity:0.5;">Verb Engine Warming Up...</p>';
-    else container.innerHTML = '<p style="padding:40px; text-align:center; opacity:0.5;">Glossary Indexing...</p>';
-}
-
-// GAME CORE
-function launchModule(m) {
-    active = { 
-        mod: m, 
-        deck: [...m.data].sort(() => 0.5 - Math.random()), 
-        count: 0, 
-        total: m.data.length, 
-        errors: 0,
-        startTime: Date.now()
-    };
-    
-    document.getElementById('mod-tag').innerText = `LEVEL ${m.lvl} • ${m.topic}`;
-    showScreen('scr-game');
-    generateDots();
-    nextQuestion();
-}
-
-function nextQuestion() {
-    if(active.deck.length === 0) return finalizeSession();
-    active.cur = active.deck.pop();
-    active.count++;
-    updateDots();
-    renderQuestion();
-}
-
-function renderQuestion() {
-    const canvas = document.getElementById('game-canvas');
-    const controls = document.getElementById('game-controls');
-    canvas.innerHTML = ''; controls.innerHTML = '';
-
-    // Logic: Alternate between Scramble and Multiple Choice
-    const type = Math.random() > 0.4 ? 'scramble' : 'choice';
-
-    if(type === 'scramble') {
-        canvas.innerHTML = `
-            <div class="q-wrap">
-                <div class="q-hint">Translate to Spanish</div>
-                <div class="q-sub">${active.cur.en}</div>
-            </div>
-            <div class="drop-zone" id="drop-area"></div>
-            <div id="word-pool" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;"></div>
-        `;
-        
-        const words = active.cur.es.split(' ').sort(() => 0.5 - Math.random());
-        words.forEach(w => {
-            const chip = document.createElement('div');
-            chip.className = 'word-chip';
-            chip.innerText = w;
-            chip.onclick = () => {
-                const target = chip.parentElement.id === 'word-pool' ? document.getElementById('drop-area') : document.getElementById('word-pool');
-                target.appendChild(chip);
-            };
-            document.getElementById('word-pool').appendChild(chip);
-        });
-        
-        controls.innerHTML = `<button class="btn-footer" onclick="validateScramble()">Validate Token</button>`;
-    } else {
-        canvas.innerHTML = `
-            <div class="q-wrap">
-                <div class="q-hint">Target Identification</div>
-                <div class="q-main">${active.cur.es}</div>
-            </div>
-            <div class="opt-stack" id="opt-mount"></div>
-        `;
-        
-        const choices = [active.cur.en, "Incorrect Context", "Wrong Translation", "Invalid Matching"].sort(() => 0.5 - Math.random());
-        choices.forEach(c => {
-            const btn = document.createElement('button');
-            btn.className = 'opt-btn';
-            btn.innerText = c;
-            btn.onclick = () => {
-                if(c === active.cur.en) {
-                    btn.classList.add('correct');
-                    state.xp += 15;
-                    setTimeout(nextQuestion, 600);
-                } else {
-                    btn.classList.add('wrong');
-                    active.errors++;
-                }
-            };
-            document.getElementById('opt-mount').appendChild(btn);
-        });
-    }
-}
-
-function validateScramble() {
-    const guess = Array.from(document.getElementById('drop-area').children).map(c => c.innerText).join(' ');
-    if(guess === active.cur.es) {
-        state.xp += 25;
-        nextQuestion();
-    } else {
-        active.errors++;
-        alert(`Neural Correction: ${active.cur.es}`);
-        nextQuestion();
-    }
-}
-
-// FINALIZE & RECAP BRIDGE
-function finalizeSession() {
-    const overlay = document.getElementById('recap-overlay');
-    const list = document.getElementById('recap-list');
-    
-    overlay.style.display = 'flex';
-    document.getElementById('recap-title').innerText = active.mod.topic;
-    document.getElementById('recap-performance').innerText = `${active.total}/${active.total} Tokens processed with ${active.errors} corrections.`;
-    
-    // Fill Recap List
-    list.innerHTML = active.mod.data.map(d => `
-        <div class="recap-item">
-            <span class="recap-es">${d.es}</span>
-            <span class="recap-en">${d.en}</span>
-        </div>
-    `).join('');
-
-    // Bridge Logic
-    const nextMod = CURRICULUM[active.mod.id + 1];
-    if(nextMod) {
-        document.getElementById('bridge-next-lvl').innerText = `Next: ${nextMod.topic}`;
-    } else {
-        document.getElementById('bridge-next-lvl').innerText = `Trajectory Complete`;
-    }
-
-    document.getElementById('btn-recap-finish').onclick = () => {
-        // Unlock Logic
-        if(!state.completed.includes(active.mod.id)) {
-            state.completed.push(active.mod.id);
-            if(active.mod.id === state.unlocked) state.unlocked++;
-        }
-        
-        // Stats
-        const sessionMins = Math.floor((Date.now() - active.startTime) / 60000);
-        state.mins += Math.max(sessionMins, 2);
-        
-        save();
-        overlay.style.display = 'none';
-        quitGame();
-    };
-}
-
-// UTILS
-function updateDashboard() {
-    document.getElementById('disp-xp').innerText = state.xp.toLocaleString();
-    document.getElementById('disp-min').innerText = state.mins;
-    document.getElementById('disp-streak').innerText = `🔥 ${state.streak}`;
-    
-    const pct = (state.unlocked / CURRICULUM.length) * 100;
-    document.getElementById('disp-pct').innerText = pct.toFixed(1) + "%";
-    document.getElementById('bar-main').style.width = pct + "%";
-    
-    let rank = "RECRUIT";
-    if(state.xp > 500) rank = "PAISA";
-    if(state.xp > 2000) rank = "VETERAN";
-    if(state.xp > 5000) rank = "TITAN";
-    document.getElementById('disp-rank').innerText = rank;
-}
-
-function quitGame() {
-    showScreen('scr-dash');
-    init();
-}
-
-function save() { localStorage.setItem('titan_mastery_v17', JSON.stringify(state)); }
-
-function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-}
-
-function triggerAudio() {
-    if(!active.cur) return;
-    const utterance = new SpeechSynthesisUtterance(active.cur.es);
-    utterance.lang = 'es-MX';
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
-}
-
-function generateDots() {
-    const mount = document.getElementById('game-dots');
-    mount.innerHTML = '';
-    for(let i=0; i<active.total; i++) {
-        const dot = document.createElement('div');
-        dot.style.cssText = 'width:6px; height:6px; border-radius:50%; background: var(--border); transition: 0.3s;';
-        mount.appendChild(dot);
-    }
-}
-
-function updateDots() {
-    const dots = document.getElementById('game-dots').children;
-    if(dots[active.count - 1]) dots[active.count - 1].style.background = 'var(--accent)';
-}
-
-// RUN
-init();
-</script>
-</body>
-</html>
+        {es:"El juez decidió", en:"The judge decided"}, {es:"Bajo la ley actual", en:"Under the law"}, {es:"Propiedad privada real", en:"Real private property"},
+        {es:"Un delito muy grave", en:"A serious crime"}, {es:"Declarar la verdad pura", en:"To declare the truth"}, {es:"Pagar la multa hoy", en:"To pay the fine today"},
+        {es:"Cumplir el acuerdo", en:"To fulfill the agreement"}, {es:"Tengo pruebas sólidas", en:"I have solid evidence"}, {es:"El veredicto final", en:"The final verdict"},
+        {es:"Derechos humanos básicos", en:"Basic human rights"}, {es:"Dem
