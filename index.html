@@ -1,238 +1,212 @@
-<!DOCTYPE html>
+<html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Blink Elite: Colombia 50h</title>
+    <title>Blink Elite: 100-Hour Legend</title>
     <style>
-        :root { --gold: #fbbf24; --blue: #3b82f6; --red: #ef4444; --bg: #020617; --card: #1e293b; --text: #f8fafc; --win: #10b981; --slate: #64748b; }
-        * { box-sizing: border-box; -webkit-user-select: none; touch-action: manipulation; font-family: 'Inter', system-ui, sans-serif; }
-        body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        :root { --p-gold: #fbbf24; --p-blue: #3b82f6; --p-green: #10b981; --p-bg: #020617; --p-card: #1e293b; --p-text: #f8fafc; --p-accent: #8b5cf6; }
+        .theme-medellin { --p-bg: #0f172a; --p-accent: #10b981; }
+        .theme-cyber { --p-bg: #000; --p-accent: #06b6d4; --p-card: #111; }
+
+        * { box-sizing: border-box; -webkit-user-select: none; touch-action: manipulation; font-family: 'Inter', sans-serif; transition: 0.3s; }
+        body { background: var(--p-bg); color: var(--p-text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        .screen { display: none; flex-direction: column; height: 100%; width: 100%; padding: 25px; animation: fadeIn 0.3s ease; }
+        .screen { display: none; flex-direction: column; height: 100%; width: 100%; padding: 25px; overflow-y: auto; }
         .active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Navigation */
-        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid #1e293b; }
-        .lvl-tag { background: var(--gold); color: #000; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 900; }
+        /* 100-Hour Progress Tracker */
+        .progress-circle { width: 100%; background: var(--p-card); border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .bar-bg { width: 100%; height: 12px; background: #0f172a; border-radius: 6px; margin-top: 10px; overflow: hidden; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--p-accent), var(--p-blue)); width: 0%; transition: 1s ease-out; }
 
-        /* Menu Elements */
-        .scroll-area { flex: 1; overflow-y: auto; padding-bottom: 40px; }
-        .label { color: var(--slate); font-size: 11px; font-weight: 800; letter-spacing: 1.2px; margin: 25px 0 8px; text-transform: uppercase; }
-        select { width: 100%; padding: 18px; background: var(--card); border: 1px solid #334155; border-radius: 12px; color: white; font-size: 16px; margin-bottom: 15px; appearance: none; }
-        
-        .btn { border: none; padding: 18px; border-radius: 14px; color: white; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.2s; }
-        .btn-main { width: 100%; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; padding: 20px; }
-        .btn-blue { background: var(--blue); box-shadow: 0 4px 0 #1d4ed8; }
-        .btn-dark { background: var(--card); border: 1px solid #334155; }
-        .btn:active { transform: translateY(2px); box-shadow: none; }
+        /* Navigation Tiles */
+        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .tile { background: var(--p-card); padding: 20px; border-radius: 18px; border: 1px solid #334155; text-align: center; }
+        .tile-val { display: block; font-size: 20px; font-weight: 900; color: var(--p-gold); }
+        .tile-lbl { font-size: 10px; opacity: 0.6; text-transform: uppercase; font-weight: 800; }
 
-        /* Flashcard Engine */
-        .card-wrap { flex: 1; display: flex; align-items: center; justify-content: center; }
-        .flashcard { width: 100%; height: 280px; background: var(--card); border-radius: 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px; border: 2px solid #334155; box-shadow: 0 20px 40px rgba(0,0,0,0.5); position: relative; }
-        .c-side { position: absolute; top: 30px; font-size: 10px; font-weight: 900; color: var(--gold); letter-spacing: 3px; }
-        .c-main { font-size: 1.7rem; font-weight: 700; line-height: 1.4; }
+        /* Input Styles */
+        select, input { width: 100%; padding: 16px; background: var(--p-card); border: 1px solid #334155; border-radius: 12px; color: white; margin-bottom: 12px; outline: none; }
+        .btn-hero { width: 100%; padding: 20px; border-radius: 16px; border: none; color: white; font-weight: 800; font-size: 16px; background: var(--p-accent); cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.3); }
+        .btn-hero:active { transform: translateY(3px); box-shadow: none; }
 
-        /* Exam Engine */
-        .exam-box { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid #334155; }
-        .opt { background: #0f172a; padding: 16px; border-radius: 12px; margin-top: 10px; border: 1px solid #334155; font-weight: 600; font-size: 14px; }
-        .opt:active { background: var(--blue); }
-        .prog-bar { width: 100%; height: 6px; background: #1e293b; border-radius: 3px; margin: 15px 0; overflow: hidden; }
-        .prog-fill { height: 100%; background: var(--win); transition: width 0.3s; width: 0%; }
+        /* Slang Lab */
+        .lab-card { background: rgba(139, 92, 246, 0.1); border: 1px dashed var(--p-accent); padding: 15px; border-radius: 12px; margin-top: 20px; }
 
-        /* Match Grid */
-        .m-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .m-box { background: var(--card); border: 1px solid #334155; border-radius: 12px; padding: 15px; min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 13px; font-weight: 600; }
-        .m-hidden { visibility: hidden; }
-        .m-sel { border-color: var(--gold); background: #0f172a; }
+        /* Game UI */
+        .game-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .q-text { font-size: 1.8rem; font-weight: 800; margin-bottom: 20px; }
+        .opt-grid { display: grid; grid-template-columns: 1fr; gap: 10px; width: 100%; }
+        .opt-btn { background: var(--p-card); padding: 18px; border-radius: 14px; border: 1px solid #334155; color: white; font-weight: 600; }
+        .drop-box { min-height: 80px; width: 100%; border: 2px dashed #334155; border-radius: 16px; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; justify-content: center; }
+        .chip { background: var(--p-accent); padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; }
     </style>
 </head>
-<body>
+<body id="main-body">
 
 <div id="scr-home" class="screen active">
-    <h1 style="margin:0; font-size: 2.2rem; color: var(--gold);">Blink Elite</h1>
-    <p style="color:var(--slate); margin: 5px 0 0;">Colombia Mastery Path</p>
-    
-    <div class="scroll-area">
-        <div class="label">Select Level</div>
-        <select id="sel-lvl">
-            <optgroup label="A1: Beginner">
-                <option value="A1.1">A1.1: Greetings & Slang</option>
-                <option value="A1.2">A1.2: Essential Needs</option>
-                <option value="A1.3">A1.3: Directions & Money</option>
-            </optgroup>
-            <optgroup label="A2: Intermediate">
-                <option value="A2.1">A2.1: Social Hanging Out</option>
-                <option value="A2.2">A2.2: Life in the Past</option>
-                <option value="A2.3">A2.3: Future Intentions</option>
-            </optgroup>
-            <optgroup label="B1: Fluent">
-                <option value="B1.1">B1.1: Work & Business</option>
-                <option value="B1.2">B1.2: Deep Emotions</option>
-                <option value="B1.3">B1.3: Heavy Street Slang</option>
-            </optgroup>
-            <optgroup label="B2: Master">
-                <option value="B2.1">B2.1: Formal Logic</option>
-                <option value="B2.2">B2.2: Hypotheticals</option>
-                <option value="B2.3">B2.3: Native Proverbs</option>
-            </optgroup>
-        </select>
+    <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h1 style="margin:0; font-size:26px; color:var(--p-accent);">BLINK ELITE</h1>
+        <div id="badge" style="font-size:10px; font-weight:900; border:1px solid var(--p-gold); padding:4px 8px; border-radius:20px; color:var(--p-gold);">RECLUTA</div>
+    </header>
 
-        <div class="label">Training Modules</div>
-        <button class="btn btn-main btn-dark" onclick="startModule('flash')">
-            <span>🗂️ Flashcards</span> <span style="font-size:10px; opacity:0.5;">MEMORY</span>
-        </button>
-        <button class="btn btn-main btn-dark" onclick="startModule('match')">
-            <span>⚡ Speed Match</span> <span style="font-size:10px; opacity:0.5;">REACTION</span>
-        </button>
-        
-        <div class="label">Certification</div>
-        <button class="btn btn-main btn-blue" onclick="startExam()">
-            <span>📝 Level Exam</span> <span style="font-size:10px; color:white;">PASS 70%</span>
-        </button>
-    </div>
-</div>
-
-<div id="scr-flash" class="screen">
-    <div class="header">
-        <button onclick="home()" style="background:none; border:none; color:white; font-size:24px;">✕</button>
-        <div id="f-tag" class="lvl-tag">A1.1</div>
-        <button onclick="tts()" style="background:none; border:none; color:white; font-size:24px;">🔊</button>
-    </div>
-    <div class="prog-bar"><div id="f-fill" class="prog-fill"></div></div>
-    <div class="card-wrap">
-        <div class="flashcard" onclick="flip()">
-            <div id="f-side" class="c-side">SPANISH</div>
-            <div id="f-main" class="c-main">...</div>
+    <div class="progress-circle">
+        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800;">
+            <span>TOTAL PROGRESS</span>
+            <span id="txt-prog">0 / 100 HRS</span>
         </div>
+        <div class="bar-bg"><div id="fill-prog" class="bar-fill"></div></div>
     </div>
-    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-top:20px;">
-        <button class="btn" style="background:var(--red)" onclick="fSwipe(false)">RETRY</button>
-        <button class="btn" style="background:var(--slate)" onclick="flip()">FLIP</button>
-        <button class="btn" style="background:var(--win)" onclick="fSwipe(true)">GOT IT</button>
+
+    <div class="nav-grid">
+        <div class="tile"><span id="val-xp" class="tile-val">0</span><span class="tile-lbl">XP Points</span></div>
+        <div class="tile"><span id="val-mins" class="tile-val">0</span><span class="tile-lbl">Mins Done</span></div>
+    </div>
+
+    <label class="tile-lbl">Target Level</label>
+    <select id="sel-lvl">
+        <option value="A1">A1: Medellín Basics</option>
+        <option value="B1">B1: Street Talk</option>
+        <option value="B2">B2: Local Legend</option>
+        <option value="CUSTOM">★ My Custom Slang Lab</option>
+    </select>
+
+    <button class="btn-hero" onclick="startFlow()">ENTER FLOW STATE</button>
+
+    <div class="lab-card">
+        <div class="tile-lbl" style="color:var(--p-accent); margin-bottom:10px;">Slang Lab: Add New Phrase</div>
+        <input type="text" id="lab-es" placeholder="Spanish (e.g. ¡Qué chimba!)">
+        <input type="text" id="lab-en" placeholder="English (e.g. That's cool!)">
+        <button class="btn-hero" style="padding:10px; font-size:12px;" onclick="addToLab()">SAVE TO MY DECK</button>
     </div>
 </div>
 
-<div id="scr-exam" class="screen">
-    <div class="header">
-        <button onclick="home()" style="background:none; border:none; color:white; font-size:24px;">✕</button>
-        <div style="font-size:12px; font-weight:900;" id="ex-count">QUESTION 1/10</div>
-        <div></div>
+<div id="scr-flow" class="screen">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <button onclick="exitFlow()" style="background:none; border:none; color:white; font-size:28px;">✕</button>
+        <div id="flow-mode" class="tile-lbl" style="background:var(--p-accent); padding:4px 10px; border-radius:5px; color:white;">FLOW</div>
+        <button onclick="tts()" style="background:none; border:none; color:white; font-size:28px;">🔊</button>
     </div>
-    <div class="prog-bar"><div id="ex-fill" class="prog-fill"></div></div>
-    <div class="exam-box">
-        <p id="ex-q" style="font-size:1.3rem; font-weight:700; margin-bottom:20px;"></p>
-        <div id="ex-opts"></div>
-    </div>
-</div>
-
-<div id="scr-match" class="screen">
-    <div class="header" style="margin-bottom:20px;">
-        <button onclick="home()" style="background:none; border:none; color:white; font-size:24px;">✕</button>
-        <div class="lvl-tag">SPEED MATCH</div>
-        <div></div>
-    </div>
-    <div id="m-grid" class="m-grid"></div>
+    <div id="flow-content" class="game-area"></div>
+    <div id="flow-footer" style="margin-top:20px;"></div>
 </div>
 
 <script>
-// Data Bank (Simplified for length, but structured for 200 questions)
-const db = {
-    "A1.1": [
-        {es:"¡Qué más, parce!", en:"What's up, friend!", q:"How do you greet a close friend in Medellin?", a:"¡Qué más, parce!", o:["Hola señor","Buenos días","Mucho gusto"]},
-        {es:"Todo bien", en:"All good", q:"The phrase 'Todo bien' means...", a:"All good", o:["I'm sick","Maybe","Goodbye"]},
-        {es:"¿Bien o qué?", en:"Good or what?", q:"A common way to ask 'How are you?' is...", a:"¿Bien o qué?", o:["¿Dónde está?","¿Qué hora es?","Chao"]},
-        {es:"Mucho gusto", en:"Nice to meet you", q:"Translate: 'Nice to meet you'", a:"Mucho gusto", o:["Hasta luego","Con permiso","De nada"]},
-        {es:"Chao pues", en:"Bye then", q:"To say goodbye casually, use...", a:"Chao pues", o:["Siga","Hágale","Bien"]},
-        {es:"¡De una!", en:"Let's do it!", q:"'¡De una!' expresses...", a:"Total agreement", o:["Anger","Sadness","Confusion"]},
-        {es:"¿Cómo va todo?", en:"How is it going?", q:"'¿Cómo va todo?' asks...", a:"How is everything?", o:["Who is that?","Where are you?","What is it?"]}
-    ],
-    "B2.3": [
-        {es:"Meter la pata", en:"To mess up", q:"What does the idiom 'Meter la pata' mean?", a:"To mess up / Make a mistake", o:["To walk fast","To buy shoes","To kick a ball"]},
-        {es:"A duras penas", en:"Barely", q:"Translate: 'I barely made it'", a:"A duras penas llegué", o:["Llegué rápido","No llegué","Llegué feliz"]}
-    ]
+let userData = {
+    name: "User", xp: 0, minutes: 0, 
+    customDeck: [],
+    levels: {
+        "A1": [{es:"¡Qué más, parce!", en:"What's up, friend!"},{es:"Todo bien", en:"All good"}],
+        "B1": [{es:"¡Qué nota!", en:"How cool!"},{es:"No me de papaya", en:"Don't give a chance"}],
+        "B2": [{es:"Ponerse las pilas", en:"To get moving/sharp"},{es:"Hágale pues", en:"Go for it"}]
+    }
 };
 
-let deck = [], qList = [], cur = 0, isF = false, score = 0, mSel = null;
+let currentItem = null, startTime = null, deck = [];
 
-function startModule(mode) {
+// PERSISTENCE
+window.onload = () => {
+    const saved = localStorage.getItem('blink100h');
+    if(saved) userData = JSON.parse(saved);
+    updateUI();
+};
+
+function updateUI() {
+    document.getElementById('val-xp').innerText = userData.xp;
+    document.getElementById('val-mins').innerText = userData.minutes;
+    const progressPct = Math.min((userData.minutes / 6000) * 100, 100); // 6000 mins = 100 hours
+    document.getElementById('fill-prog').style.width = progressPct + "%";
+    document.getElementById('txt-prog').innerText = (userData.minutes/60).toFixed(1) + " / 100 HRS";
+    
+    const badge = document.getElementById('badge');
+    if(userData.minutes > 3000) badge.innerText = "CAPITÁN";
+    if(userData.minutes > 5400) badge.innerText = "LEYENDA";
+}
+
+function addToLab() {
+    const es = document.getElementById('lab-es').value;
+    const en = document.getElementById('lab-en').value;
+    if(es && en) {
+        userData.customDeck.push({es, en});
+        document.getElementById('lab-es').value = '';
+        document.getElementById('lab-en').value = '';
+        save();
+        alert("Phrase added to Custom Lab!");
+    }
+}
+
+function startFlow() {
     const lvl = document.getElementById('sel-lvl').value;
-    deck = [...(db[lvl] || db["A1.1"])];
-    if(mode === 'flash') { show('scr-flash'); nextF(); }
-    if(mode === 'match') { show('scr-match'); initM(); }
+    deck = lvl === "CUSTOM" ? userData.customDeck : userData.levels[lvl];
+    if(deck.length < 1) return alert("Add phrases to your lab first!");
+    startTime = Date.now();
+    show('scr-flow');
+    nextTask();
 }
 
-function startExam() {
-    const lvl = document.getElementById('sel-lvl').value;
-    const pool = db[lvl] || db["A1.1"];
-    qList = pool.sort(() => 0.5 - Math.random()).slice(0, 10);
-    cur = 0; score = 0;
-    show('scr-exam');
-    renderQ();
+function nextTask() {
+    userData.xp += 15;
+    currentItem = deck[Math.floor(Math.random() * deck.length)];
+    const types = ["multi", "scramble", "audio", "flash"];
+    renderTask(types[Math.floor(Math.random() * types.length)]);
 }
 
-// Flashcard Logic
-function nextF() {
-    if(deck.length === 0) { alert("Level Mastered!"); home(); return; }
-    cur = Math.floor(Math.random() * deck.length);
-    isF = false; renderF();
-}
-function renderF() {
-    const item = deck[cur];
-    document.getElementById('f-main').innerText = isF ? item.en : item.es;
-    document.getElementById('f-side').innerText = isF ? "ENGLISH" : "SPANISH";
-}
-function flip() { isF = !isF; renderF(); }
-function fSwipe(ok) { if(ok) deck.splice(cur, 1); nextF(); }
+function renderTask(type) {
+    const content = document.getElementById('flow-content');
+    const footer = document.getElementById('flow-footer');
+    content.innerHTML = ''; footer.innerHTML = '';
+    document.getElementById('flow-mode').innerText = type.toUpperCase();
 
-// Exam Logic
-function renderQ() {
-    const q = qList[cur];
-    document.getElementById('ex-count').innerText = `QUESTION ${cur+1}/10`;
-    document.getElementById('ex-fill').style.width = (cur/10)*100 + "%";
-    document.getElementById('ex-q').innerText = q.q;
-    const opts = [q.a, ...q.o].sort(() => 0.5 - Math.random());
-    const container = document.getElementById('ex-opts');
-    container.innerHTML = '';
-    opts.forEach(o => {
-        const d = document.createElement('div'); d.className = 'opt'; d.innerText = o;
-        d.onclick = () => { if(o === q.a) score++; cur++; if(cur<qList.length) renderQ(); else finish(); };
-        container.appendChild(d);
-    });
-}
-function finish() {
-    const p = (score/qList.length)*100;
-    alert(`Exam Complete: ${p}% \n${p >= 70 ? "CERTIFIED!" : "FAILED. Practice more."}`);
-    home();
-}
-
-// Match Logic
-function initM() {
-    const g = document.getElementById('m-grid'); g.innerHTML = '';
-    let p = []; deck.forEach((x,i) => p.push({t:x.es,id:i,ty:'s'},{t:x.en,id:i,ty:'e'}));
-    p.sort(() => 0.5 - Math.random()).forEach(d => {
-        const b = document.createElement('div'); b.className = 'm-box'; b.innerText = d.t;
-        b.onclick = () => {
-            b.classList.add('m-sel');
-            if(!mSel) mSel = {el:b, d:d};
-            else {
-                if(mSel.d.id === d.id && mSel.d.ty !== d.ty) { b.classList.add('m-hidden'); mSel.el.classList.add('m-hidden'); }
-                else { const f = mSel.el; setTimeout(() => { b.classList.remove('m-sel'); f.classList.remove('m-sel'); }, 300); }
-                mSel = null;
-            }
-        };
-        g.appendChild(b);
-    });
+    if(type === "flash") {
+        content.innerHTML = `<div class="q-text" id="f-txt">${currentItem.es}</div><p style="opacity:0.4">Tap to Flip</p>`;
+        content.onclick = () => { document.getElementById('f-txt').innerText = currentItem.en; };
+        footer.innerHTML = `<button class="btn-hero" onclick="nextTask()">CONTINUE</button>`;
+    } else if(type === "multi") {
+        content.innerHTML = `<div class="q-text">${currentItem.es}</div><p class="tile-lbl">Choose Translation</p>`;
+        const grid = document.createElement('div'); grid.className = 'opt-grid';
+        [currentItem.en, "A coffee please", "Tomorrow morning"].sort(()=>Math.random()-0.5).forEach(o => {
+            const b = document.createElement('div'); b.className = 'opt-btn'; b.innerText = o;
+            b.onclick = () => { if(o === currentItem.en) nextTask(); else b.style.borderColor = "var(--p-red)"; };
+            grid.appendChild(b);
+        });
+        content.appendChild(grid);
+    } else if(type === "scramble") {
+        content.innerHTML = `<div class="tile-lbl">Build: ${currentItem.en}</div><div class="drop-box" id="drop"></div><div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center;" id="pool"></div>`;
+        const pool = content.querySelector('#pool');
+        currentItem.es.split(' ').sort(()=>Math.random()-0.5).forEach(w => {
+            const c = document.createElement('div'); c.className = 'chip'; c.innerText = w;
+            c.onclick = () => { (c.parentElement === pool ? content.querySelector('#drop') : pool).appendChild(c); };
+            pool.appendChild(c);
+        });
+        footer.innerHTML = `<button class="btn-hero" onclick="checkS()">VERIFY</button>`;
+    } else { // audio
+        content.innerHTML = `<div class="q-text">🔊 Listening...</div>`; tts();
+        const grid = document.createElement('div'); grid.className = 'opt-grid';
+        [currentItem.en, "Wrong one", "Incorrect"].sort(()=>Math.random()-0.5).forEach(o => {
+            const b = document.createElement('div'); b.className = 'opt-btn'; b.innerText = o;
+            b.onclick = () => { if(o === currentItem.en) nextTask(); else b.style.borderColor = "var(--p-red)"; };
+            grid.appendChild(b);
+        });
+        content.appendChild(grid);
+    }
 }
 
-function tts() {
-    const u = new SpeechSynthesisUtterance(deck[cur].es);
-    u.lang = 'es-MX'; window.speechSynthesis.speak(u);
+function checkS() {
+    const guess = Array.from(document.getElementById('drop').children).map(c => c.innerText).join(' ');
+    if(guess === currentItem.es) nextTask(); else alert("Oops! Order matters.");
 }
+
+function exitFlow() {
+    const elapsed = Math.floor((Date.now() - startTime) / 60000);
+    userData.minutes += elapsed;
+    save();
+    location.reload();
+}
+
+function save() { localStorage.setItem('blink100h', JSON.stringify(userData)); }
 function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-function home() { show('scr-home'); }
+function tts() { const u = new SpeechSynthesisUtterance(currentItem.es); u.lang = 'es-MX'; window.speechSynthesis.speak(u); }
 </script>
 </body>
 </html>
-
